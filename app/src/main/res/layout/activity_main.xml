@@ -14,10 +14,12 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/home_screen_tab_layout"
+        app:tabBackground="@color/colorPrimary"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.viewpager2.widget.ViewPager2
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/home_screen_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
