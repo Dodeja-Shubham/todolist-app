@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.view.SearchEvent;
 import android.view.View;
 import android.widget.TableLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.vys.todo.Fragments.FinishedFragment;
 import com.vys.todo.Fragments.UpcomingTasksFragment;
@@ -29,10 +31,12 @@ import com.vys.todo.Fragments.UpcomingTasksFragment;
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
+    public static String SearchQuery = "";
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private FloatingActionButton addBtn;
 
     Fragment[] fragments = {new UpcomingTasksFragment(),new FinishedFragment()};
 
@@ -47,6 +51,14 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = findViewById(R.id.home_screen_tab_layout);
         viewPager = findViewById(R.id.home_screen_view_pager);
+        addBtn = findViewById(R.id.home_screen_floating_btn);
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addNewTask();
+            }
+        });
 
         /**adding new tabs*/
         tabLayout.addTab(tabLayout.newTab().setText("Upcoming"));
@@ -120,5 +132,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.home_menu_add){
+            addNewTask();
+        }
+        return true;
+    }
+
+    private void addNewTask(){
+        Intent intent = new Intent(MainActivity.this,AddTaskActivity.class);
+        startActivity(intent);
     }
 }
