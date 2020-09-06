@@ -34,11 +34,11 @@ public class AddTaskActivity extends AppCompatActivity {
     private TextView tv_error_date, tv_error_time, tv_error_name;
 
     private Calendar calendar = Calendar.getInstance();
-    private int mYear = Calendar.getInstance().get(Calendar.YEAR);
-    private int mMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
-    private int mDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-    private int mHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-    private int mMinute = Calendar.getInstance().get(Calendar.MINUTE);
+    private int mYear = -1;
+    private int mMonth = -1;
+    private int mDay = -1;
+    private int mHour = -1;
+    private int mMinute = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +95,17 @@ public class AddTaskActivity extends AppCompatActivity {
                 showTimepicker();
             }
         });
+
+        taskNameEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                tv_error_name.setVisibility(View.INVISIBLE);
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
     }
 
     private void showDatepicker() {
@@ -104,17 +115,14 @@ public class AddTaskActivity extends AppCompatActivity {
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-                        int currentMonth = calendar.get(Calendar.MONTH) + 1;
-                        int currentYear = calendar.get(Calendar.YEAR);
-
                         mMonth = monthOfYear + 1;
                         mYear = year;
                         mDay = dayOfMonth;
                         taskDateEt.setText(mDay + "-" + mMonth + "-" + mYear);
                         holder.requestFocus();
+                        tv_error_date.setVisibility(View.INVISIBLE);
                     }
-                }, mYear, mMonth, mDay);
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
@@ -125,16 +133,54 @@ public class AddTaskActivity extends AppCompatActivity {
                     @Override
                     public void onTimeSet(TimePicker view, int pHour,
                                           int pMinute) {
-                        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-                        int currentMinute = calendar.get(Calendar.MINUTE);
-
                         mHour = pHour;
                         mMinute = pMinute;
                         taskTimeEt.setText(mHour + ":" + mMinute);
                         holder.requestFocus();
+                        tv_error_time.setVisibility(View.INVISIBLE);
                     }
-                }, mHour, mMinute, true);
+                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
         timePickerDialog.show();
+    }
+
+    private void validateData(){
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = calendar.get(Calendar.MONTH) + 1;
+        int currentYear = calendar.get(Calendar.YEAR);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+
+        Log.e(TAG,"current timestamp: " + currentDay + "/" + currentMonth + "/" + currentYear + " -- " + currentHour + ":" + currentMinute);
+        Log.e(TAG,"selected timestamp: " + mDay + "/" + mMonth + "/" + mYear + " -- " + mHour + ":" + mMinute);
+
+        if (currentYear > mYear) {
+            Log.e(TAG,"year");
+            tv_error_date.setVisibility(View.VISIBLE);
+            tv_error_date.setText(getString(R.string.cannot_set_a_reminder_for_past));
+            tv_error_time.setVisibility(View.INVISIBLE);
+        } else if (currentMonth > mMonth) {
+            Log.e(TAG,"month");
+            tv_error_date.setVisibility(View.VISIBLE);
+            tv_error_date.setText(getString(R.string.cannot_set_a_reminder_for_past));
+            tv_error_time.setVisibility(View.INVISIBLE);
+        } else if (currentDay > mDay) {
+            Log.e(TAG,"day");
+            tv_error_date.setVisibility(View.VISIBLE);
+            tv_error_date.setText(getString(R.string.cannot_set_a_reminder_for_past));
+            tv_error_time.setVisibility(View.INVISIBLE);
+        } else if ((currentDay == mDay && currentMonth == mMonth && currentYear == mYear) && currentHour > mHour) {
+            tv_error_time.setVisibility(View.VISIBLE);
+            tv_error_time.setText(getString(R.string.cannot_set_a_reminder_for_past));
+            tv_error_date.setVisibility(View.INVISIBLE);
+        } else if ((currentDay == mDay && currentMonth == mMonth && currentYear == mYear) && currentMinute > mMinute) {
+            tv_error_time.setVisibility(View.VISIBLE);
+            tv_error_time.setText(getString(R.string.cannot_set_a_reminder_for_past));
+            tv_error_date.setVisibility(View.INVISIBLE);
+        } else {
+            tv_error_date.setVisibility(View.INVISIBLE);
+            tv_error_time.setVisibility(View.INVISIBLE);
+            Log.e(TAG,"submitted");
+        }
     }
 
     @Override
@@ -152,7 +198,22 @@ public class AddTaskActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.add_task_menu_check) {
-            Log.e(TAG, "Submit Pressed");
+            if(taskNameEt.getText().toString().trim().isEmpty()){
+                tv_error_name.setVisibility(View.VISIBLE);
+            } else {
+                tv_error_name.setVisibility(View.INVISIBLE);
+            }
+            if(mYear == -1 || mMonth == -1 || mDay == -1){
+                tv_error_date.setText(getString(R.string.date_not_set));
+                tv_error_date.setVisibility(View.VISIBLE);
+            }
+            if(mHour == -1 || mMinute == -1){
+                tv_error_time.setText(getString(R.string.time_not_set));
+                tv_error_time.setVisibility(View.VISIBLE);
+            }
+            if(mYear != -1 && mMonth != -1 && mDay != -1 && mHour != -1 && mMinute != -1){
+                validateData();
+            }
         } else if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
