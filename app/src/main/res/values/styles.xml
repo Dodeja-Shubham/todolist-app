@@ -7,4 +7,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="EditTextTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="backgroundTint">@color/et_custom</item>
+    </style>
+
 </resources>
