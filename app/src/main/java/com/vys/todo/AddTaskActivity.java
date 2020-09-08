@@ -141,6 +141,7 @@ public class AddTaskActivity extends AppCompatActivity {
                         taskDateEt.setText(date.toLocaleString());
                         tv_error_date.setVisibility(View.INVISIBLE);
                         dueDate = date;
+                        holder.requestFocus();
                     }
                 }).display();
     }

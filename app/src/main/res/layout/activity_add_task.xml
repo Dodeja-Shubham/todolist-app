@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="6dp"
-                app:srcCompat="@drawable/baseline_schedule_black_36" />
+                app:srcCompat="@drawable/baseline_schedule_black_24" />
         </LinearLayout>
 
 
