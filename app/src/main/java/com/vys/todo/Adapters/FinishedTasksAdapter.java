@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.vys.todo.Data.TaskDataModel;
@@ -32,13 +34,37 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         try {
             holder.name.setText(list.get(position).getTitle());
             holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
             holder.delete.setVisibility(View.GONE);
-            holder.completed.setVisibility(View.GONE);
+            holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_done_all_black_24));
+            holder.name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context,list.get(position).getDue_date().replace("GMT+05:30 ",""),Toast.LENGTH_LONG).show();
+                }
+            });
+            holder.date.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context,list.get(position).getDue_date().replace("GMT+05:30 ",""),Toast.LENGTH_LONG).show();
+                }
+            });
+            holder.category.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context,list.get(position).getDue_date().replace("GMT+05:30 ",""),Toast.LENGTH_LONG).show();
+                }
+            });
+            holder.completed.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(context,list.get(position).getDue_date().replace("GMT+05:30 ",""),Toast.LENGTH_LONG).show();
+                }
+            });
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -49,7 +75,7 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
         return list.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, date, category;
         ImageButton delete, completed;
 
