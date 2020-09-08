@@ -24,6 +24,14 @@ public class FinishedFragment extends Fragment {
     private FinishedTasksAdapter adapter;
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser){
+            reloadDataDB();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -40,5 +48,19 @@ public class FinishedFragment extends Fragment {
         finishedRV.setLayoutManager(new LinearLayoutManager(getContext()));
         finishedRV.setAdapter(adapter);
         return v;
+    }
+
+    private void reloadDataDB(){
+        Database db = new Database(getContext());
+        allFinishedTasks = db.getAllFinished();
+        if(adapter != null){
+            adapter.setNewData(allFinishedTasks);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        reloadDataDB();
     }
 }
