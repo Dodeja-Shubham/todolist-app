@@ -42,7 +42,7 @@ import java.util.UUID;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    public static String[] CATEGORIES_LIST = {"Default","Home","Work","Personal","Fitness","Medication"};
+    private final String[] CATEGORIES_LIST = {"Default","Home","Work","Personal","Fitness","Medication"};
 
     private final String TAG = "AddTaskActivity";
     private EditText taskNameEt, taskDateEt;

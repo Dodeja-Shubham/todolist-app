@@ -5,9 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -65,8 +63,8 @@ public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdap
         }
     }
 
-    public void addNewData(List<TaskDataModel> data){
-        this.list.addAll(data);
+    public void addNewData(TaskDataModel data){
+        this.list.add(data);
         notifyDataSetChanged();
     }
 
