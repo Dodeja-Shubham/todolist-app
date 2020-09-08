@@ -103,7 +103,29 @@ public class Database extends SQLiteOpenHelper {
             String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
             String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
             String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
-            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,Boolean.getBoolean(COMPLETED),CREATED);
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED);
+            array_list.add(data);
+            res.moveToNext();
+        }
+        res.close();
+        db.close();
+        return array_list;
+    }
+
+    public List<TaskDataModel> getAllFinished() {
+        List<TaskDataModel> array_list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + FINISHED_TABLE, null);
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            int ID = res.getInt(res.getColumnIndex(COLUMN_ID));
+            String TITLE = res.getString(res.getColumnIndex(COLUMN_NAME));
+            String DATE = res.getString(res.getColumnIndex(COLUMN_DUE_DATE));
+            String CREATED = res.getString(res.getColumnIndex(COLUMN_CREATED_AT));
+            String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
+            String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
+            String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR, COMPLETED.equals("true"),CREATED);
             array_list.add(data);
             res.moveToNext();
         }

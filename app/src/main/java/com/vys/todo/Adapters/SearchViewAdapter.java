@@ -39,11 +39,18 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         try{
             holder.name.setText(list.get(position).getTitle());
-            holder.date.setText(list.get(position).getDue_date());
+            holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
 
             holder.delete.setVisibility(View.GONE);
             holder.completed.setVisibility(View.GONE);
+
+            if(list.get(position).getIs_completed()){
+                holder.completed.setVisibility(View.VISIBLE);
+            } else{
+                holder.delete.setVisibility(View.VISIBLE);
+                holder.delete.setImageDrawable(context.getDrawable(R.drawable.baseline_schedule_black_24));
+            }
 
         }catch (Exception e){
             Log.e(TAG,e.getMessage());

@@ -67,7 +67,7 @@ public class TaskDataModel {
         this.id = id;
     }
 
-    public boolean isIs_completed() {
+    public boolean getIs_completed() {
         return is_completed;
     }
 
