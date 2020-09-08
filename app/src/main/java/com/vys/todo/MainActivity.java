@@ -28,6 +28,7 @@ import android.widget.TableLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.vys.todo.Adapters.SearchViewAdapter;
 import com.vys.todo.Adapters.UpcomingTasksAdapter;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private FloatingActionButton addBtn;
     private RecyclerView searchRV;
-    private UpcomingTasksAdapter adapter;
+    private SearchViewAdapter adapter;
 
     private Database db;
     private List<TaskDataModel> allTasks;
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemActionExpand(MenuItem item) {
                 Log.e(TAG,"Search Clicked");
                 allTasks = db.getAllTasks();
-                adapter = new UpcomingTasksAdapter(MainActivity.this,allTasks);
+                adapter = new SearchViewAdapter(MainActivity.this,allTasks);
                 searchRV.setVisibility(View.VISIBLE);
                 viewPager.setVisibility(View.GONE);
                 tabLayout.setVisibility(View.GONE);
