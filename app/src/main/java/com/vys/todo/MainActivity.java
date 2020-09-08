@@ -5,8 +5,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -25,18 +28,28 @@ import android.widget.TableLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.vys.todo.Adapters.UpcomingTasksAdapter;
+import com.vys.todo.Data.Database;
+import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.Fragments.FinishedFragment;
 import com.vys.todo.Fragments.UpcomingTasksFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
-    public static String SearchQuery = "";
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private FloatingActionButton addBtn;
+    private RecyclerView searchRV;
+    private UpcomingTasksAdapter adapter;
+
+    private Database db;
+    private List<TaskDataModel> allTasks;
 
     Fragment[] fragments = {new UpcomingTasksFragment(),new FinishedFragment()};
 
@@ -48,10 +61,11 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("ToDo");
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
-
+        db = new Database(MainActivity.this);
         tabLayout = findViewById(R.id.home_screen_tab_layout);
         viewPager = findViewById(R.id.home_screen_view_pager);
         addBtn = findViewById(R.id.home_screen_floating_btn);
+        searchRV = findViewById(R.id.home_screen_search_rv);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,28 +123,71 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.e(TAG,query);
-                return false;
+                List<TaskDataModel> newData = new ArrayList<>();
+                for (int k = 0;k < allTasks.size();k++){
+                    if(allTasks.get(k).getTitle().contains(query)){
+                        newData.add(allTasks.get(k));
+                    }
+                }
+                adapter.setNewData(newData);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 Log.e(TAG,newText);
-                return false;
+                return true;
             }
         });
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
+        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onMenuItemActionExpand(MenuItem item) {
                 Log.e(TAG,"Search Clicked");
+                allTasks = db.getAllTasks();
+                adapter = new UpcomingTasksAdapter(MainActivity.this,allTasks);
+                searchRV.setVisibility(View.VISIBLE);
+                viewPager.setVisibility(View.GONE);
+                tabLayout.setVisibility(View.GONE);
+                searchRV.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                searchRV.setAdapter(adapter);
+                return true;
             }
-        });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
             @Override
-            public boolean onClose() {
+            public boolean onMenuItemActionCollapse(MenuItem item) {
                 Log.e(TAG,"Search Bar Closed");
-                return false;
+                adapter = null;
+                searchRV.setVisibility(View.GONE);
+                viewPager.setVisibility(View.VISIBLE);
+                tabLayout.setVisibility(View.VISIBLE);
+                return true;
             }
         });
+//        searchView.setOnSearchClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.e(TAG,"Search Clicked");
+//                allTasks = db.getAllTasks();
+//                adapter = new UpcomingTasksAdapter(MainActivity.this,allTasks);
+//                searchRV.setVisibility(View.VISIBLE);
+//                viewPager.setVisibility(View.INVISIBLE);
+//                tabLayout.setVisibility(View.INVISIBLE);
+//                searchRV.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+//                searchRV.setAdapter(adapter);
+//
+//            }
+//        });
+//        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//            @Override
+//            public boolean onClose() {
+//                Log.e(TAG,"Search Bar Closed");
+//                adapter = null;
+//                searchRV.setVisibility(View.INVISIBLE);
+//                viewPager.setVisibility(View.VISIBLE);
+//                tabLayout.setVisibility(View.VISIBLE);
+//                return true;
+//            }
+//        });
         return true;
     }
 

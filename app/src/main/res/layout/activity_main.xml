@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:weightSum="1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -16,17 +18,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/home_screen_tab_layout"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            app:tabBackground="@color/colorPrimary" />
+            android:layout_height="0dp">
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/home_screen_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/home_screen_tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                app:tabBackground="@color/colorPrimary" />
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/home_screen_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:visibility="gone"
+                android:translationZ="2dp"
+                android:id="@+id/home_screen_search_rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
