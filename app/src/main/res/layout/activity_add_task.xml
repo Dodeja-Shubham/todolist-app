@@ -31,6 +31,7 @@
             style="@style/EditTextTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             android:layout_marginTop="6dp"
             android:hint="@string/enter_task_name_here"
             android:textColor="@color/black"
@@ -78,6 +79,7 @@
                     android:layout_marginTop="6dp"
                     android:editable="false"
                     android:clickable="true"
+                    android:textSize="16sp"
                     android:hint="@string/date_not_set"
                     android:textColor="@color/black"
                     android:textColorHint="#656565"
@@ -100,69 +102,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="6dp"
-                app:srcCompat="@drawable/baseline_calendar_today_black_24" />
+                app:srcCompat="@drawable/baseline_schedule_black_36" />
         </LinearLayout>
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/due_time"
-            android:textColor="@color/colorAccent" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/add_task_time_et"
-                    style="@style/EditTextTheme"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:editable="false"
-                    android:clickable="true"
-                    android:hint="@string/time_not_set"
-                    android:textColor="@color/black"
-                    android:textColorHint="#656565"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/add_task_error_time"
-                    android:text="@string/cannot_set_a_reminder_for_past"
-                    android:textColor="@android:color/holo_red_light"
-                    android:textSize="12sp"
-                    android:visibility="invisible"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/add_task_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="6dp"
-                app:srcCompat="@drawable/baseline_schedule_black_24" />
-        </LinearLayout>
-
-
 
 
     </LinearLayout>
@@ -180,6 +121,8 @@
             android:textColor="@color/colorAccent" />
 
         <Spinner
+            android:backgroundTint="@color/black"
+            android:popupBackground="@color/white"
             android:id="@+id/add_task_category_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

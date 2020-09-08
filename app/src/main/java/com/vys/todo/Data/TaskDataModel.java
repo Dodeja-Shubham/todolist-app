@@ -2,20 +2,19 @@ package com.vys.todo.Data;
 
 public class TaskDataModel {
 
-    private String title, category, due_date, due_time, colour,  created_at;
+    private String title, category, due_date, colour,  created_at;
     private int id;
     private boolean is_completed;
 
     public TaskDataModel(){}
 
-    public TaskDataModel(int ID, String TITLE, String CATEGORY, String DUE_DATE, String DUE_TIME, String COLOUR,
+    public TaskDataModel(int ID, String TITLE, String CATEGORY, String DUE_DATE, String COLOUR,
                          boolean IS_COMPLETED, String CREATED_AT) {
         this.id = ID;
         this.title = TITLE;
         this.category = CATEGORY;
         this.due_date = DUE_DATE;
         this.colour = COLOUR;
-        this.due_time = DUE_TIME;
         this.is_completed = IS_COMPLETED;
         this.created_at = CREATED_AT;
     }
@@ -42,14 +41,6 @@ public class TaskDataModel {
 
     public void setDue_date(String due_date) {
         this.due_date = due_date;
-    }
-
-    public String getDue_time() {
-        return due_time;
-    }
-
-    public void setDue_time(String due_time) {
-        this.due_time = due_time;
     }
 
     public String getColour() {

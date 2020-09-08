@@ -27,11 +27,17 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class AddTaskActivity extends AppCompatActivity {
@@ -39,19 +45,15 @@ public class AddTaskActivity extends AppCompatActivity {
     public static String[] CATEGORIES_LIST = {"Default","Home","Work","Personal","Fitness","Medication"};
 
     private final String TAG = "AddTaskActivity";
-    private EditText taskNameEt, taskDateEt, taskTimeEt;
+    private EditText taskNameEt, taskDateEt;
     private LinearLayout holder;
-    private TextView tv_error_date, tv_error_time, tv_error_name;
+    private TextView tv_error_date, tv_error_name;
     private int selectedCategory = 0;
 
     Spinner categoriesSpinner;
 
     private Calendar calendar = Calendar.getInstance();
-    private int mYear = -1;
-    private int mMonth = -1;
-    private int mDay = -1;
-    private int mHour = -1;
-    private int mMinute = -1;
+    private Date dueDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +71,14 @@ public class AddTaskActivity extends AppCompatActivity {
 
         taskNameEt = findViewById(R.id.add_task_name_et);
         taskDateEt = findViewById(R.id.add_task_date_et);
-        taskTimeEt = findViewById(R.id.add_task_time_et);
         ImageView iv_calendar = findViewById(R.id.add_task_calendar);
-        ImageView iv_clock = findViewById(R.id.add_task_time);
         holder = findViewById(R.id.holder_add_task);
         tv_error_date = findViewById(R.id.add_task_error_date);
-        tv_error_time = findViewById(R.id.add_task_error_time);
         tv_error_name = findViewById(R.id.add_task_error_name);
         categoriesSpinner = findViewById(R.id.add_task_category_spinner);
 
         categoriesSpinner.setAdapter(new ArrayAdapter<String>(AddTaskActivity.this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, CATEGORIES_LIST));
+                R.layout.spinner_dropdown_item, R.id.spinner_item_tv, CATEGORIES_LIST));
 
         categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -102,26 +101,10 @@ public class AddTaskActivity extends AppCompatActivity {
             }
         });
 
-        taskTimeEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    showTimepicker();
-                }
-            }
-        });
-
         iv_calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDatepicker();
-            }
-        });
-
-        iv_clock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTimepicker();
             }
         });
 
@@ -142,137 +125,49 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void showDatepicker() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(AddTaskActivity.this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @SuppressLint("SetTextI18n")
+        new SingleDateAndTimePickerDialog.Builder(AddTaskActivity.this)
+                .curved()
+                .minutesStep(1)
+                .displayListener(new SingleDateAndTimePickerDialog.DisplayListener() {
                     @Override
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
-                        mMonth = monthOfYear + 1;
-                        mYear = year;
-                        mDay = dayOfMonth;
-                        String month = "";
-                        switch (mMonth) {
-                            case 1: {
-                                month = "January";
-                                break;
-                            }
-                            case 2: {
-                                month = "February";
-                                break;
-                            }
-                            case 3: {
-                                month = "March";
-                                break;
-                            }
-                            case 4: {
-                                month = "April";
-                                break;
-                            }
-                            case 5: {
-                                month = "May";
-                                break;
-                            }
-                            case 6: {
-                                month = "June";
-                                break;
-                            }
-                            case 7: {
-                                month = "July";
-                                break;
-                            }
-                            case 8: {
-                                month = "August";
-                                break;
-                            }
-                            case 9: {
-                                month = "September";
-                                break;
-                            }
-                            case 10: {
-                                month = "October";
-                                break;
-                            }
-                            case 11: {
-                                month = "November";
-                                break;
-                            }
-                            case 12: {
-                                month = "December";
-                                break;
-                            }
-                        }
-                        taskDateEt.setText(mDay + "-" + month + "-" + mYear);
-                        holder.requestFocus();
+                    public void onDisplayed(SingleDateAndTimePicker picker) {
+                        //retrieve the SingleDateAndTimePicker
+                    }
+                })
+                .title("Task Date & Time")
+                .listener(new SingleDateAndTimePickerDialog.Listener() {
+                    @Override
+                    public void onDateSelected(Date date) {
+                        taskDateEt.setText(date.toLocaleString());
                         tv_error_date.setVisibility(View.INVISIBLE);
+                        dueDate = date;
                     }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-        datePickerDialog.show();
-    }
-
-    private void showTimepicker() {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(AddTaskActivity.this,
-                new TimePickerDialog.OnTimeSetListener() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onTimeSet(TimePicker view, int pHour,
-                                          int pMinute) {
-                        mHour = pHour;
-                        mMinute = pMinute;
-                        taskTimeEt.setText(mHour + ":" + mMinute);
-                        holder.requestFocus();
-                        tv_error_time.setVisibility(View.INVISIBLE);
-                    }
-                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
-        timePickerDialog.show();
+                }).display();
     }
 
     private void validateData() {
-        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-        int currentMonth = calendar.get(Calendar.MONTH) + 1;
-        int currentYear = calendar.get(Calendar.YEAR);
-        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-        int currentMinute = calendar.get(Calendar.MINUTE);
-
-        Log.e(TAG, "current timestamp: " + currentDay + "/" + currentMonth + "/" + currentYear + " -- " + currentHour + ":" + currentMinute);
-        Log.e(TAG, "selected timestamp: " + mDay + "/" + mMonth + "/" + mYear + " -- " + mHour + ":" + mMinute);
-
-        if (currentYear > mYear) {
-            Log.e(TAG, "year");
+        Date todaysDate = calendar.getTime();
+        if(dueDate == null){
+            tv_error_date.setText(getString(R.string.date_not_set));
             tv_error_date.setVisibility(View.VISIBLE);
+        }
+        else if(todaysDate.compareTo(dueDate) > 0){
             tv_error_date.setText(getString(R.string.cannot_set_a_reminder_for_past));
-            tv_error_time.setVisibility(View.INVISIBLE);
-        } else if (currentMonth > mMonth) {
-            Log.e(TAG, "month");
             tv_error_date.setVisibility(View.VISIBLE);
-            tv_error_date.setText(getString(R.string.cannot_set_a_reminder_for_past));
-            tv_error_time.setVisibility(View.INVISIBLE);
-        } else if (currentDay > mDay) {
-            Log.e(TAG, "day");
-            tv_error_date.setVisibility(View.VISIBLE);
-            tv_error_date.setText(getString(R.string.cannot_set_a_reminder_for_past));
-            tv_error_time.setVisibility(View.INVISIBLE);
-        } else if ((currentDay == mDay && currentMonth == mMonth && currentYear == mYear) && currentHour > mHour) {
-            tv_error_time.setVisibility(View.VISIBLE);
-            tv_error_time.setText(getString(R.string.cannot_set_a_reminder_for_past));
-            tv_error_date.setVisibility(View.INVISIBLE);
-        } else if ((currentDay == mDay && currentMonth == mMonth && currentYear == mYear) && currentMinute > mMinute) {
-            tv_error_time.setVisibility(View.VISIBLE);
-            tv_error_time.setText(getString(R.string.cannot_set_a_reminder_for_past));
-            tv_error_date.setVisibility(View.INVISIBLE);
         } else {
             tv_error_date.setVisibility(View.INVISIBLE);
-            tv_error_time.setVisibility(View.INVISIBLE);
             addDataToDb();
         }
+
     }
 
     private void addDataToDb() {
         Database db = new Database(AddTaskActivity.this);
         int id = new Random().nextInt(10000000);
-        if (db.insertTask(id, taskNameEt.getText().toString(), taskDateEt.getText().toString(), taskTimeEt.getText().toString(),
+        if (db.insertTask(id, taskNameEt.getText().toString(), dueDate.toString(),
                 calendar.getTime().toString(), "false", "#FFFFFF", CATEGORIES_LIST[selectedCategory])) {
             Toast.makeText(AddTaskActivity.this, "Task Added", Toast.LENGTH_LONG).show();
+            finish();
         } else {
             Toast.makeText(AddTaskActivity.this, "Unable to add task", Toast.LENGTH_LONG).show();
         }
@@ -298,17 +193,7 @@ public class AddTaskActivity extends AppCompatActivity {
             } else {
                 tv_error_name.setVisibility(View.INVISIBLE);
             }
-            if (mYear == -1 || mMonth == -1 || mDay == -1) {
-                tv_error_date.setText(getString(R.string.date_not_set));
-                tv_error_date.setVisibility(View.VISIBLE);
-            }
-            if (mHour == -1 || mMinute == -1) {
-                tv_error_time.setText(getString(R.string.time_not_set));
-                tv_error_time.setVisibility(View.VISIBLE);
-            }
-            if (mYear != -1 && mMonth != -1 && mDay != -1 && mHour != -1 && mMinute != -1) {
-                validateData();
-            }
+            validateData();
         } else if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
