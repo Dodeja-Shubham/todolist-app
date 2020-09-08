@@ -16,12 +16,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
@@ -32,12 +36,15 @@ import java.util.UUID;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
+    public static String[] CATEGORIES_LIST = {"Default","Home","Work","Personal","Fitness","Medication"};
+
     private final String TAG = "AddTaskActivity";
     private EditText taskNameEt, taskDateEt, taskTimeEt;
-    private ImageView iv_calendar, iv_clock;
     private LinearLayout holder;
     private TextView tv_error_date, tv_error_time, tv_error_name;
+    private int selectedCategory = 0;
+
+    Spinner categoriesSpinner;
 
     private Calendar calendar = Calendar.getInstance();
     private int mYear = -1;
@@ -50,7 +57,7 @@ public class AddTaskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("New Task");
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
@@ -63,12 +70,28 @@ public class AddTaskActivity extends AppCompatActivity {
         taskNameEt = findViewById(R.id.add_task_name_et);
         taskDateEt = findViewById(R.id.add_task_date_et);
         taskTimeEt = findViewById(R.id.add_task_time_et);
-        iv_calendar = findViewById(R.id.add_task_calendar);
-        iv_clock = findViewById(R.id.add_task_time);
+        ImageView iv_calendar = findViewById(R.id.add_task_calendar);
+        ImageView iv_clock = findViewById(R.id.add_task_time);
         holder = findViewById(R.id.holder_add_task);
         tv_error_date = findViewById(R.id.add_task_error_date);
         tv_error_time = findViewById(R.id.add_task_error_time);
         tv_error_name = findViewById(R.id.add_task_error_name);
+        categoriesSpinner = findViewById(R.id.add_task_category_spinner);
+
+        categoriesSpinner.setAdapter(new ArrayAdapter<String>(AddTaskActivity.this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, CATEGORIES_LIST));
+
+        categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedCategory = i;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         taskDateEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -240,14 +263,19 @@ public class AddTaskActivity extends AppCompatActivity {
         } else {
             tv_error_date.setVisibility(View.INVISIBLE);
             tv_error_time.setVisibility(View.INVISIBLE);
-            Log.e(TAG, "submitted");
+            addDataToDb();
         }
     }
 
     private void addDataToDb() {
         Database db = new Database(AddTaskActivity.this);
         int id = new Random().nextInt(10000000);
-        db.insertTask(id, taskNameEt.getText().toString(), taskDateEt.getText().toString(), taskTimeEt.getText().toString(), calendar.getTime().toString(), "false", "#FFFFFF", "");
+        if (db.insertTask(id, taskNameEt.getText().toString(), taskDateEt.getText().toString(), taskTimeEt.getText().toString(),
+                calendar.getTime().toString(), "false", "#FFFFFF", CATEGORIES_LIST[selectedCategory])) {
+            Toast.makeText(AddTaskActivity.this, "Task Added", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(AddTaskActivity.this, "Unable to add task", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
