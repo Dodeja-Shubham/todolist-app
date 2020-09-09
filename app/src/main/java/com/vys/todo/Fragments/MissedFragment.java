@@ -16,9 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.vys.todo.Adapters.AllTasksAdapter;
 import com.vys.todo.Adapters.MissedTasksAdapter;
+import com.vys.todo.Class.RecyclerItemClickListener;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
@@ -81,6 +83,18 @@ public class MissedFragment extends Fragment {
 
         missedRV.setLayoutManager(new LinearLayoutManager(getContext()));
         missedRV.setAdapter(adapter);
+
+        missedRV.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), missedRV, new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position, int x, int y) {
+                showMenuPopUp(view,getContext(),x,y,position);
+            }
+
+            @Override
+            public void onLongItemClick(View view, int position) {
+
+            }
+        }));
         return v;
     }
 
@@ -106,10 +120,10 @@ public class MissedFragment extends Fragment {
         reloadDataDB();
     }
 
-    public void showMenuPopUp(final View view, final Context mCtx, int x, int y) {
+    public void showMenuPopUp(final View view, final Context mCtx, int x, int y,final int position) {
         LayoutInflater layoutInflater = (LayoutInflater) mCtx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.all_tasks_menu, null);
+        View popupView = layoutInflater.inflate(R.layout.missed_tasks_menu, null);
         final PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT, true);
         popupWindow.setFocusable(true);
@@ -127,5 +141,33 @@ public class MissedFragment extends Fragment {
             }
         });
         popupWindow.showAsDropDown(view, x, -100);
+
+        TextView delete = popupView.findViewById(R.id.missed_menu_delete);
+        TextView finished = popupView.findViewById(R.id.missed_menu_finished);
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Database db = new Database(getContext());
+                db.deleteMissed(missedTasks.get(position).getId());
+                missedTasks.remove(position);
+                adapter.notifyDataSetChanged();
+                popupWindow.dismiss();
+            }
+        });
+
+        finished.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Database db = new Database(getContext());
+                db.deleteMissed(missedTasks.get(position).getId());
+                db.insertFinished(missedTasks.get(position).getId(), missedTasks.get(position).getTitle()
+                        , missedTasks.get(position).getDue_date(), missedTasks.get(position).getCreated_at()
+                        , "true", missedTasks.get(position).getColour(), missedTasks.get(position).getCategory());
+                missedTasks.remove(position);
+                adapter.notifyDataSetChanged();
+                popupWindow.dismiss();
+            }
+        });
     }
 }
