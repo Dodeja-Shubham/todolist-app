@@ -37,7 +37,7 @@ public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdap
             holder.name.setText(list.get(position).getTitle());
             holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
-            holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_schedule_black_24));
+            holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

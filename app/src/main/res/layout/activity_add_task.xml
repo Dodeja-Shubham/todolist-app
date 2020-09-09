@@ -98,11 +98,12 @@
 
             <ImageView
                 android:id="@+id/add_task_calendar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:tint="@color/black"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="6dp"
-                app:srcCompat="@drawable/baseline_schedule_black_24" />
+                app:srcCompat="@drawable/ic_clock" />
         </LinearLayout>
 
 

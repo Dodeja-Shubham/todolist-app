@@ -9,16 +9,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
+import com.vys.todo.Adapters.AllTasksAdapter;
 import com.vys.todo.Adapters.FinishedTasksAdapter;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FinishedFragment extends Fragment {
 
+    public static String[] CATEGORIES_LIST = {"All","Default","Home","Work","Personal","Fitness","Medication"};
+
+    private String TAG = "FinishedFragment";
+    private Spinner categorySelector;
+    private int selectedCategory = 0;
     private RecyclerView finishedRV;
     private List<TaskDataModel> allFinishedTasks;
     private FinishedTasksAdapter adapter;
@@ -45,6 +55,37 @@ public class FinishedFragment extends Fragment {
         allFinishedTasks = db.getAllFinished();
         adapter = new FinishedTasksAdapter(getContext(),allFinishedTasks);
         finishedRV = v.findViewById(R.id.finished_rv);
+        finishedRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        finishedRV.setAdapter(adapter);
+
+        categorySelector = v.findViewById(R.id.f_category_selector);
+        categorySelector.setAdapter(new ArrayAdapter<String>(getContext(),R.layout.spinner_dropdown_item,R.id.spinner_item_tv, CATEGORIES_LIST));
+
+        categorySelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedCategory = i;
+                if(i == 0){
+                    if(adapter != null){
+                        adapter.setNewData(allFinishedTasks);
+                    }
+                }else{
+                    if(adapter != null){
+                        List<TaskDataModel> newData = new ArrayList<>();
+                        for (int k = 0;k < allFinishedTasks.size();k++){
+                            if(allFinishedTasks.get(k).getCategory().equals(CATEGORIES_LIST[selectedCategory])){
+                                newData.add(allFinishedTasks.get(k));
+                            }
+                        }
+                        adapter.setNewData(newData);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
         finishedRV.setLayoutManager(new LinearLayoutManager(getContext()));
         finishedRV.setAdapter(adapter);
         return v;

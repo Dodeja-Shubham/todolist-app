@@ -37,7 +37,7 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
             holder.name.setText(list.get(position).getTitle());
             holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
-            holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_done_all_black_24));
+            holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
             holder.completed.setColorFilter(context.getColor(android.R.color.holo_green_light), android.graphics.PorterDuff.Mode.MULTIPLY);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

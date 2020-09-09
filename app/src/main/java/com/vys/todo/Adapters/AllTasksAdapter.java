@@ -50,11 +50,11 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
             holder.category.setText(list.get(position).getCategory());
             Date date = stringToDate(list.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
             if(list.get(position).getIs_completed()){
-                holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_done_all_black_24));
+                holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
             }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
-                holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_warning_black_24));
+                holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
             }else {
-                holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_schedule_black_24));
+                holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

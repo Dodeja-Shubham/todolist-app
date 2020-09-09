@@ -44,7 +44,7 @@ public class MissedTasksAdapter extends RecyclerView.Adapter<MissedTasksAdapter.
             holder.name.setText(list.get(position).getTitle());
             holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
-            holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_warning_black_24));
+            holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
             holder.completed.setColorFilter(context.getColor(android.R.color.holo_red_light), android.graphics.PorterDuff.Mode.MULTIPLY);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

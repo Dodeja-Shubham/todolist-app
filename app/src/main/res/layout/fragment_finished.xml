@@ -1,13 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.FinishedFragment">
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:background="@drawable/spinner_border"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:backgroundTint="@color/black"
+            android:popupBackground="@color/white"
+            android:id="@+id/f_category_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"/>
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/finished_rv"
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
 
-</FrameLayout>
+</LinearLayout>
