@@ -1,5 +1,6 @@
 package com.vys.todo.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +18,10 @@ import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyViewHolder> {
@@ -44,6 +48,14 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
             holder.name.setText(list.get(position).getTitle());
             holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
+            Date date = stringToDate(list.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
+            if(list.get(position).getIs_completed()){
+                holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_done_all_black_24));
+            }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
+                holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_warning_black_24));
+            }else {
+                holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_schedule_black_24));
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -76,5 +88,13 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
     public void setNewData(List<TaskDataModel> data) {
         this.list = data;
         notifyDataSetChanged();
+    }
+
+    private Date stringToDate(String aDate, String aFormat) {
+        if(aDate==null) return null;
+        ParsePosition pos = new ParsePosition(0);
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpledateformat = new SimpleDateFormat(aFormat);
+        return simpledateformat.parse(aDate, pos);
+
     }
 }

@@ -5,19 +5,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
-
-import java.util.Calendar;
 import java.util.List;
 
 public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdapter.MyViewHolder> {
@@ -44,6 +37,7 @@ public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdap
             holder.name.setText(list.get(position).getTitle());
             holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
+            holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_schedule_black_24));
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

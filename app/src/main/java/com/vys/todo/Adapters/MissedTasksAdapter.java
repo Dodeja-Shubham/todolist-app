@@ -1,5 +1,6 @@
 package com.vys.todo.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
+
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class MissedTasksAdapter extends RecyclerView.Adapter<MissedTasksAdapter.MyViewHolder> {
@@ -39,7 +44,6 @@ public class MissedTasksAdapter extends RecyclerView.Adapter<MissedTasksAdapter.
             holder.name.setText(list.get(position).getTitle());
             holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
-
             holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_warning_black_24));
             holder.completed.setColorFilter(context.getColor(android.R.color.holo_red_light), android.graphics.PorterDuff.Mode.MULTIPLY);
         } catch (Exception e) {
