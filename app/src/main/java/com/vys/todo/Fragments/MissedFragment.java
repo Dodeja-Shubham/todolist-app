@@ -1,5 +1,7 @@
 package com.vys.todo.Fragments;
 
+import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,10 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 
 import com.vys.todo.Adapters.AllTasksAdapter;
@@ -44,7 +48,7 @@ public class MissedFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_missed, container, false);
         Database db = new Database(getContext());
-        missedTasks = db.getAllTasks();
+        missedTasks = db.getAllMissed();
         adapter = new MissedTasksAdapter(getContext(),missedTasks);
         missedRV = v.findViewById(R.id.missed_rv);
         categorySelector = v.findViewById(R.id.missed_category_selector);
@@ -90,8 +94,7 @@ public class MissedFragment extends Fragment {
 
     private void reloadDataDB(){
         Database db = new Database(getContext());
-        missedTasks = db.getAllTasks();
-        missedTasks.addAll(db.getAllFinished());
+        missedTasks = db.getAllMissed();
         if(adapter != null){
             adapter.setNewData(missedTasks);
         }
@@ -101,5 +104,28 @@ public class MissedFragment extends Fragment {
     public void onResume() {
         super.onResume();
         reloadDataDB();
+    }
+
+    public void showMenuPopUp(final View view, final Context mCtx, int x, int y) {
+        LayoutInflater layoutInflater = (LayoutInflater) mCtx
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.all_tasks_menu, null);
+        final PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popupWindow.setFocusable(true);
+        popupWindow.update();
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                    popupWindow.dismiss();
+                    return true;
+                }
+                return false;
+            }
+        });
+        popupWindow.showAsDropDown(view, x, -100);
     }
 }

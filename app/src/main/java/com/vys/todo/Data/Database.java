@@ -146,7 +146,7 @@ public class Database extends SQLiteOpenHelper {
             String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
             String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
             String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
-            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR, COMPLETED.equals("true"),CREATED);
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR, true,CREATED);
             array_list.add(data);
             res.moveToNext();
         }
@@ -167,7 +167,7 @@ public class Database extends SQLiteOpenHelper {
             String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
             String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
             String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
-            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR, COMPLETED.equals("false"),CREATED);
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR, false,CREATED);
             array_list.add(data);
             res.moveToNext();
         }

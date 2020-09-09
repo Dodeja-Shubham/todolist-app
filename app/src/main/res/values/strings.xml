@@ -17,4 +17,7 @@
     <string name="cannot_set_a_reminder_for_past">Cannot set a reminder for past.</string>
     <string name="cannot_set_reminder_without_a_name">Cannot set reminder without a name</string>
     <string name="category">Category</string>
+    <string name="delete">Delete</string>
+    <string name="marked_as_finished">Marked as finished</string>
+    <string name="marked_as_missed">Marked as missed</string>
 </resources>
