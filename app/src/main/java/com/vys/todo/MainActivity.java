@@ -26,12 +26,14 @@ import android.view.MenuItem;
 import android.view.SearchEvent;
 import android.view.View;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.vys.todo.Adapters.SearchViewAdapter;
 import com.vys.todo.Adapters.UpcomingTasksAdapter;
 import com.vys.todo.Data.Database;
+import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.Fragments.AllTasksFragment;
 import com.vys.todo.Fragments.FinishedFragment;
@@ -186,6 +188,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.home_menu_add) {
             addNewTask();
+        } else if(item.getItemId() == R.id.home_menu_sync){
+            if(new SharedPrefs(MainActivity.this).getIsLoggedIn()){
+                Toast.makeText(MainActivity.this,"Syncing",Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(MainActivity.this,"You need to login first",Toast.LENGTH_LONG).show();
+            }
         }
         return true;
     }

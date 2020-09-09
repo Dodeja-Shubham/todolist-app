@@ -176,6 +176,14 @@ public class Database extends SQLiteOpenHelper {
         return array_list;
     }
 
+    public void deleteAllTablesData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TASKS_TABLE + ";");
+        db.execSQL("DELETE FROM " + FINISHED_TABLE + ";");
+        db.execSQL("DELETE FROM " + MISSED_TABLE + ";");
+        db.close();
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TASKS_TABLE + ";");
