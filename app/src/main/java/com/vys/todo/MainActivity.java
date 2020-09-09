@@ -33,6 +33,7 @@ import com.vys.todo.Adapters.SearchViewAdapter;
 import com.vys.todo.Adapters.UpcomingTasksAdapter;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
+import com.vys.todo.Fragments.AllTasksFragment;
 import com.vys.todo.Fragments.FinishedFragment;
 import com.vys.todo.Fragments.UpcomingTasksFragment;
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private Database db;
     private List<TaskDataModel> allTasks;
 
-    Fragment[] fragments = {new UpcomingTasksFragment(), new FinishedFragment()};
+    Fragment[] fragments = {new AllTasksFragment(),new UpcomingTasksFragment(), new FinishedFragment()};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /**adding new tabs*/
+        tabLayout.addTab(tabLayout.newTab().setText("All Tasks"));
         tabLayout.addTab(tabLayout.newTab().setText("Upcoming"));
         tabLayout.addTab(tabLayout.newTab().setText("Finished"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
