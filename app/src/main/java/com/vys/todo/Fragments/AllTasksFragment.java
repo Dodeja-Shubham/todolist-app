@@ -26,7 +26,7 @@ public class AllTasksFragment extends Fragment {
 
     public static String[] CATEGORIES_LIST = {"All","Default","Home","Work","Personal","Fitness","Medication"};
 
-    private String TAG = "UpcomingTasksFragment";
+    private String TAG = "AllTasksFragment";
     private RecyclerView allRV;
     private List<TaskDataModel> allTasks;
     private AllTasksAdapter adapter;

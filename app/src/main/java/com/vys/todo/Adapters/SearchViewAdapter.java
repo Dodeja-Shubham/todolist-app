@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,62 +47,6 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
             holder.delete.setVisibility(View.GONE);
             holder.completed.setVisibility(View.GONE);
 
-            if (list.get(position).getIs_completed()) {
-                holder.completed.setVisibility(View.VISIBLE);
-                holder.completed.setImageDrawable(context.getDrawable(R.drawable.baseline_done_all_black_24));
-                holder.name.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-                holder.date.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-                holder.category.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-                holder.completed.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                holder.delete.setVisibility(View.VISIBLE);
-                holder.delete.setImageDrawable(context.getDrawable(R.drawable.baseline_schedule_black_24));
-                holder.name.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, "Task is scheduled on " + list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-                holder.date.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, "Task is scheduled on " + list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-                holder.category.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, "Task is scheduled on " + list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-                holder.delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(context, "Task is scheduled on " + list.get(position).getDue_date().replace("GMT+05:30 ", ""), Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -114,7 +59,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, date, category;
-        ImageButton delete, completed;
+        ImageView delete, completed;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);

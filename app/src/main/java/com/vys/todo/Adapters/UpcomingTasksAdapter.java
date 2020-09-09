@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,7 +56,7 @@ public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdap
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, date, category;
-        ImageButton delete, completed;
+        ImageView delete, completed;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,29 +65,6 @@ public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdap
             date = itemView.findViewById(R.id.ut_item_date);
             category = itemView.findViewById(R.id.ut_item_category);
             completed = itemView.findViewById(R.id.ut_item_completed_cb);
-
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Database db = new Database(context);
-                    db.deleteTask(list.get(getAdapterPosition()).getId());
-                    list.remove(getAdapterPosition());
-                    notifyDataSetChanged();
-                }
-            });
-
-            completed.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Database db = new Database(context);
-                    db.deleteTask(list.get(getAdapterPosition()).getId());
-                    db.insertFinished(list.get(getAdapterPosition()).getId(), list.get(getAdapterPosition()).getTitle(), "Completed on: " + Calendar.getInstance().getTime().toString()
-                            , list.get(getAdapterPosition()).getCreated_at(), "true", list.get(getAdapterPosition()).getColour(), list.get(getAdapterPosition()).getCategory());
-                    list.remove(getAdapterPosition());
-                    notifyDataSetChanged();
-                    Toast.makeText(context,"Marked as finished",Toast.LENGTH_LONG).show();
-                }
-            });
         }
     }
 

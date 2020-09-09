@@ -35,6 +35,7 @@ import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.Fragments.AllTasksFragment;
 import com.vys.todo.Fragments.FinishedFragment;
+import com.vys.todo.Fragments.MissedFragment;
 import com.vys.todo.Fragments.UpcomingTasksFragment;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private Database db;
     private List<TaskDataModel> allTasks;
 
-    Fragment[] fragments = {new AllTasksFragment(),new UpcomingTasksFragment(), new FinishedFragment()};
+    Fragment[] fragments = {new AllTasksFragment(),new UpcomingTasksFragment(), new FinishedFragment(), new MissedFragment()};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("All Tasks"));
         tabLayout.addTab(tabLayout.newTab().setText("Upcoming"));
         tabLayout.addTab(tabLayout.newTab().setText("Finished"));
+        tabLayout.addTab(tabLayout.newTab().setText("Missed"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         /**setting up view pager*/
@@ -141,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.e(TAG, newText);
                 return true;
             }
         });
@@ -178,31 +179,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-//        searchView.setOnSearchClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.e(TAG,"Search Clicked");
-//                allTasks = db.getAllTasks();
-//                adapter = new UpcomingTasksAdapter(MainActivity.this,allTasks);
-//                searchRV.setVisibility(View.VISIBLE);
-//                viewPager.setVisibility(View.INVISIBLE);
-//                tabLayout.setVisibility(View.INVISIBLE);
-//                searchRV.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-//                searchRV.setAdapter(adapter);
-//
-//            }
-//        });
-//        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-//            @Override
-//            public boolean onClose() {
-//                Log.e(TAG,"Search Bar Closed");
-//                adapter = null;
-//                searchRV.setVisibility(View.INVISIBLE);
-//                viewPager.setVisibility(View.VISIBLE);
-//                tabLayout.setVisibility(View.VISIBLE);
-//                return true;
-//            }
-//        });
         return true;
     }
 
