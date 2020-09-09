@@ -52,7 +52,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
             Date date = stringToDate(list.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
             if(list.get(position).getIs_completed()){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
-            }else if(Calendar.getInstance().getTime().compareTo(date) < 0){
+            }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
             }else {
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));

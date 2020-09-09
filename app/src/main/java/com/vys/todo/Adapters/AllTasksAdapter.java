@@ -51,7 +51,7 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
             Date date = stringToDate(list.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
             if(list.get(position).getIs_completed()){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
-            }else if(Calendar.getInstance().getTime().compareTo(date) < 0){
+            }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
             }else {
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));
@@ -95,6 +95,5 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
         ParsePosition pos = new ParsePosition(0);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpledateformat = new SimpleDateFormat(aFormat);
         return simpledateformat.parse(aDate, pos);
-
     }
 }

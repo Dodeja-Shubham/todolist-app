@@ -1,5 +1,6 @@
 package com.vys.todo.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vys.todo.Adapters.AllTasksAdapter;
 import com.vys.todo.Adapters.UpcomingTasksAdapter;
@@ -25,7 +27,11 @@ import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AllTasksFragment extends Fragment {
@@ -89,7 +95,7 @@ public class AllTasksFragment extends Fragment {
         allRV.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), allRV, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position,int x,int y) {
-                showMenuPopUp(view,getContext(),x,y);
+                showMenuPopUp(view,getContext(),x,y,position);
             }
 
             @Override
@@ -124,7 +130,7 @@ public class AllTasksFragment extends Fragment {
         reloadDataDB();
     }
 
-    public void showMenuPopUp(final View view, final Context mCtx,int x,int y) {
+    public void showMenuPopUp(final View view, final Context mCtx,int x,int y,final int position) {
         LayoutInflater layoutInflater = (LayoutInflater) mCtx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = layoutInflater.inflate(R.layout.all_tasks_menu, null);
@@ -145,5 +151,90 @@ public class AllTasksFragment extends Fragment {
             }
         });
         popupWindow.showAsDropDown(view, x, -100);
+
+        TextView delete = popupView.findViewById(R.id.all_menu_delete);
+        TextView finished = popupView.findViewById(R.id.all_menu_finished);
+        TextView missed = popupView.findViewById(R.id.all_menu_missed);
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Database db = new Database(getContext());
+                db.deleteTask(allTasks.get(position).getId());
+                allTasks.remove(position);
+                adapter.notifyDataSetChanged();
+                popupWindow.dismiss();
+            }
+        });
+
+        finished.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Database db = new Database(getContext());
+                Date date = stringToDate(allTasks.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
+                if(allTasks.get(position).getIs_completed()){
+                    Toast.makeText(mCtx,"Task is already finished",Toast.LENGTH_LONG).show();
+                }else if(Calendar.getInstance().getTime().compareTo(date) < 0){
+                    db.deleteMissed(allTasks.get(position).getId());
+                    db.insertFinished(allTasks.get(position).getId(), allTasks.get(position).getTitle()
+                            , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
+                            , "true", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
+                    allTasks.remove(position);
+                    adapter.notifyDataSetChanged();
+                    popupWindow.dismiss();
+                }else {
+                    db.deleteTask(allTasks.get(position).getId());
+                    db.insertFinished(allTasks.get(position).getId(), allTasks.get(position).getTitle()
+                            , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
+                            , "true", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
+                    allTasks.remove(position);
+                    adapter.notifyDataSetChanged();
+                    popupWindow.dismiss();
+                }
+            }
+        });
+
+        missed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Database db = new Database(getContext());
+                Date date = stringToDate(allTasks.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
+
+                db.deleteTask(allTasks.get(position).getId());
+                db.insertMissed(allTasks.get(position).getId(), allTasks.get(position).getTitle()
+                        , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
+                        , "false", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
+                allTasks.remove(position);
+                adapter.notifyDataSetChanged();
+                popupWindow.dismiss();
+
+                if(allTasks.get(position).getIs_completed()){
+                    db.deleteFinished(allTasks.get(position).getId());
+                    db.insertMissed(allTasks.get(position).getId(), allTasks.get(position).getTitle()
+                            , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
+                            , "false", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
+                    allTasks.remove(position);
+                    adapter.notifyDataSetChanged();
+                    popupWindow.dismiss();
+                }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
+                    Toast.makeText(mCtx,"Task already marked as missed",Toast.LENGTH_LONG).show();
+                }else {
+                    db.deleteTask(allTasks.get(position).getId());
+                    db.insertMissed(allTasks.get(position).getId(), allTasks.get(position).getTitle()
+                            , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
+                            , "false", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
+                    allTasks.remove(position);
+                    adapter.notifyDataSetChanged();
+                    popupWindow.dismiss();
+                }
+            }
+        });
+    }
+
+    private Date stringToDate(String aDate, String aFormat) {
+        if(aDate==null) return null;
+        ParsePosition pos = new ParsePosition(0);
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat simpledateformat = new SimpleDateFormat(aFormat);
+        return simpledateformat.parse(aDate, pos);
     }
 }
