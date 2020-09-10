@@ -27,6 +27,7 @@ import com.vys.todo.APIModels.TaskResponse;
 import com.vys.todo.Adapters.SearchViewAdapter;
 import com.vys.todo.Class.ApiRequestClass;
 import com.vys.todo.Data.Database;
+import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.Fragments.AllTasksFragment;
 import com.vys.todo.Fragments.FinishedFragment;
 import com.vys.todo.Fragments.MissedFragment;
@@ -179,6 +180,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.home_menu_add) {
             addNewTask();
+        } else if(item.getItemId() == R.id.home_menu_logout){
+            SharedPrefs prefs = new SharedPrefs(MainActivity.this);
+            prefs.setToken("");
+            prefs.setPassword("");
+            prefs.setUsername("");
+            prefs.setIsLoggedIn(false);
+            startActivity(new Intent(MainActivity.this,LoginActivity.class));
+            finish();
         }
         return true;
     }
