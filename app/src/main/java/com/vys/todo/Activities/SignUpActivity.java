@@ -1,8 +1,10 @@
-package com.vys.todo;
+package com.vys.todo.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.vys.todo.R;
 
 public class SignUpActivity extends AppCompatActivity {
 

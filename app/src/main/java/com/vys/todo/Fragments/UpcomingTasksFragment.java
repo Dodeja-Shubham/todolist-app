@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,11 +19,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.vys.todo.Adapters.UpcomingTasksAdapter;
-import com.vys.todo.AddTaskActivity;
 import com.vys.todo.Class.RecyclerItemClickListener;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
-import com.vys.todo.MainActivity;
 import com.vys.todo.R;
 
 import java.util.ArrayList;

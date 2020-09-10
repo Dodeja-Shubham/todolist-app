@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/white"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".Activities.LoginActivity">
 
     <include
         layout="@layout/toolbar"
@@ -65,6 +65,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:layout_marginTop="6dp"
+            android:inputType="textPassword"
             android:hint="@string/enter_password_here"
             android:textColor="@color/black"
             android:textColorHint="#656565" />

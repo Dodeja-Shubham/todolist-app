@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:id="@+id/holder_add_task"
-    tools:context=".AddTaskActivity">
+    tools:context=".Activities.AddTaskActivity">
 
     <include
         layout="@layout/toolbar"

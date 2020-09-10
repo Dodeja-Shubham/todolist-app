@@ -1,7 +1,6 @@
-package com.vys.todo;
+package com.vys.todo.Activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -10,28 +9,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SearchEvent;
 import android.view.View;
-import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.vys.todo.Adapters.SearchViewAdapter;
-import com.vys.todo.Adapters.UpcomingTasksAdapter;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.Data.TaskDataModel;
@@ -39,6 +31,7 @@ import com.vys.todo.Fragments.AllTasksFragment;
 import com.vys.todo.Fragments.FinishedFragment;
 import com.vys.todo.Fragments.MissedFragment;
 import com.vys.todo.Fragments.UpcomingTasksFragment;
+import com.vys.todo.R;
 
 import java.util.ArrayList;
 import java.util.Comparator;
