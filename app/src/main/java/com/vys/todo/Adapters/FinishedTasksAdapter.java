@@ -43,7 +43,7 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
             holder.category.setText(list.get(position).getCategory());
             holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
             holder.completed.setColorFilter(context.getColor(android.R.color.holo_green_light), android.graphics.PorterDuff.Mode.MULTIPLY);
-            holder.colorHolder.setBackgroundColor(Color.parseColor(list.get(position).getColour()));
+            holder.colorHolder.setCardBackgroundColor(Color.parseColor(list.get(position).getColour()));
             holder.desc.setText(list.get(position).getDesc());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

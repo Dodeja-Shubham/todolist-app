@@ -28,4 +28,8 @@
     <string name="description">Description</string>
     <string name="enter_few_lines_about_task">Enter few lines about task</string>
     <string name="field_empty">Field empty</string>
+    <string name="email">Email</string>
+    <string name="enter_email_here">Enter email here</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="sign_up">sign up</string>
 </resources>

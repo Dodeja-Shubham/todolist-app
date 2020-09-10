@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String TAG = "LoginActivity";
 
     private EditText usernameET, passwordET;
-    private TextView usernameError, passwordError;
+    private TextView usernameError, passwordError,create;
     private Button loginBtn;
 
     OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
@@ -59,19 +59,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("New Task");
+        toolbar.setTitle("Login");
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
-        try {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        } catch (Exception e) {
-            Log.e(TAG, "getSupportActionBar()");
-        }
         usernameET = findViewById(R.id.login_name_et);
         passwordET = findViewById(R.id.login_pass_et);
         usernameError = findViewById(R.id.login_error_name);
         passwordError = findViewById(R.id.login_error_pass);
         loginBtn = findViewById(R.id.login_btn_submit);
+        create = findViewById(R.id.login_create_account);
         loginBtn.setOnClickListener(view -> {
             if (validateData()) {
                 username = usernameET.getText().toString().trim();
@@ -145,6 +141,10 @@ public class LoginActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
 
             }
+        });
+        create.setOnClickListener(it -> {
+            startActivity(new Intent(LoginActivity.this,SignUpActivity.class));
+            finish();
         });
     }
 

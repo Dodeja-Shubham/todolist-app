@@ -54,7 +54,7 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
             }else {
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));
             }
-            holder.colorHolder.setBackgroundColor(Color.parseColor(list.get(position).getColour()));
+            holder.colorHolder.setCardBackgroundColor(Color.parseColor(list.get(position).getColour()));
             holder.desc.setText(list.get(position).getDesc());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

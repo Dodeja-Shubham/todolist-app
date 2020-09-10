@@ -51,6 +51,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
             }else {
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));
             }
+            holder.desc.setText(list.get(position).getDesc());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -58,11 +59,13 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
 
     @Override
     public int getItemCount() {
+        if(list == null)
+            return 0;
         return list.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView name, date, category;
+        TextView name, date, category,desc;
         ImageView delete, completed;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -72,6 +75,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
             date = itemView.findViewById(R.id.ut_item_date);
             category = itemView.findViewById(R.id.ut_item_category);
             completed = itemView.findViewById(R.id.ut_item_completed_cb);
+            desc = itemView.findViewById(R.id.ut_item_desc);
         }
     }
 

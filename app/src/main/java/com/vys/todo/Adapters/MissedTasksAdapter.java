@@ -41,7 +41,7 @@ public class MissedTasksAdapter extends RecyclerView.Adapter<MissedTasksAdapter.
             holder.date.setText(list.get(position).getDueDate());
             holder.category.setText(list.get(position).getCategory());
             holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
-            holder.colorHolder.setBackgroundColor(Color.parseColor(list.get(position).getColour()));
+            holder.colorHolder.setCardBackgroundColor(Color.parseColor(list.get(position).getColour()));
             holder.desc.setText(list.get(position).getDesc());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

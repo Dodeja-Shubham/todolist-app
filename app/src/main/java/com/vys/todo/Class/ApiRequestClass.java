@@ -31,7 +31,7 @@ public interface ApiRequestClass {
                                   @Part("password") RequestBody password);
 
     @Multipart
-    @POST("/user/login/")
+    @POST("/user/registration/")
     Call<SignUpResponse> registerUser(@Part("username") RequestBody username,
                                       @Part("email") RequestBody email,
                                       @Part("password") RequestBody password,

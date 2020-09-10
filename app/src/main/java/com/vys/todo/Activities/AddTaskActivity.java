@@ -12,11 +12,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,7 +46,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
     private final String TAG = "AddTaskActivity";
     private EditText taskNameEt, taskDateEt, taskDescEt;
-    private LinearLayout holder;
+    private RelativeLayout holder;
+    private LinearLayout progress;
     private TextView tv_error_date, tv_error_name,tv_error_desc;
     private int selectedCategory = 0;
     Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
@@ -75,6 +78,7 @@ public class AddTaskActivity extends AppCompatActivity {
         tv_error_name = findViewById(R.id.add_task_error_name);
         tv_error_desc = findViewById(R.id.add_task_error_desc);
         categoriesSpinner = findViewById(R.id.add_task_category_spinner);
+        progress = findViewById(R.id.add_progressbar);
 
         categoriesSpinner.setAdapter(new ArrayAdapter<String>(AddTaskActivity.this,
                 R.layout.spinner_dropdown_item, R.id.spinner_item_tv, CATEGORIES_LIST));
@@ -166,7 +170,17 @@ public class AddTaskActivity extends AppCompatActivity {
 
     }
 
+    private void enableDisableTouch(boolean type) {
+        if (type) {
+            this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        } else {
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+    }
+
     private void addData() {
+        progress.setVisibility(View.VISIBLE);
+        enableDisableTouch(false);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         TaskResponse obj = new TaskResponse();
         obj.setTitle(taskNameEt.getText().toString());
@@ -181,11 +195,13 @@ public class AddTaskActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<TaskResponse> call, Response<TaskResponse> response) {
                 if(response.isSuccessful()){
+                    progress.setVisibility(View.GONE);
+                    enableDisableTouch(true);
                     Toast.makeText(AddTaskActivity.this,"Task Added",Toast.LENGTH_LONG).show();
-                    taskNameEt.setText("");
-                    taskDateEt.setText("");
                     finish();
                 }else{
+                    progress.setVisibility(View.GONE);
+                    enableDisableTouch(true);
                     Toast.makeText(AddTaskActivity.this,"Something wen't wrong",Toast.LENGTH_LONG).show();
                     try {
                         Log.e(TAG,response.errorBody().string());
@@ -197,6 +213,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<TaskResponse> call, Throwable t) {
+                progress.setVisibility(View.GONE);
+                enableDisableTouch(true);
                 Toast.makeText(AddTaskActivity.this,"Something wen't wrong",Toast.LENGTH_LONG).show();
                 Log.e(TAG,t.getMessage());
             }
