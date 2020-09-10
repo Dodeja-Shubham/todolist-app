@@ -20,4 +20,9 @@
     <string name="delete">Delete</string>
     <string name="marked_as_finished">Marked as finished</string>
     <string name="marked_as_missed">Marked as missed</string>
+    <string name="username">Username</string>
+    <string name="enter_username_here">Enter username here</string>
+    <string name="password">Password</string>
+    <string name="enter_password_here">Enter password here</string>
+    <string name="login">login</string>
 </resources>

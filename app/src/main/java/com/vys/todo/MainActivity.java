@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,"Syncing",Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(MainActivity.this,"You need to login first",Toast.LENGTH_LONG).show();
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
             }
         }
         return true;

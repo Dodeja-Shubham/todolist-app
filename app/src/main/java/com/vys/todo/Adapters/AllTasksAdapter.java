@@ -42,6 +42,7 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
         return new MyViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         try {
@@ -51,6 +52,7 @@ public class AllTasksAdapter extends RecyclerView.Adapter<AllTasksAdapter.MyView
             Date date = stringToDate(list.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
             if(list.get(position).getIs_completed()){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
+                holder.date.setText("Completed on: " + list.get(position).getCreated_at().replace("GMT+05:30 ",""));
             }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
             }else {

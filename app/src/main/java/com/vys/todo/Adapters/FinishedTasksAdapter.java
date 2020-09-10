@@ -1,5 +1,6 @@
 package com.vys.todo.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,11 +32,12 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
         return new MyViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         try {
             holder.name.setText(list.get(position).getTitle());
-            holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
+            holder.date.setText("Completed on: " + list.get(position).getCreated_at().replace("GMT+05:30 ",""));
             holder.category.setText(list.get(position).getCategory());
             holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
             holder.completed.setColorFilter(context.getColor(android.R.color.holo_green_light), android.graphics.PorterDuff.Mode.MULTIPLY);

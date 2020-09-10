@@ -42,6 +42,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
         return new MyViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         try {
@@ -52,6 +53,7 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
             Date date = stringToDate(list.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
             if(list.get(position).getIs_completed()){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
+                holder.date.setText("Completed on: " + list.get(position).getCreated_at().replace("GMT+05:30 ", ""));
             }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
             }else {

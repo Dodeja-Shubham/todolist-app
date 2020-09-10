@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Database extends SQLiteOpenHelper {
@@ -41,7 +42,7 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COLUMN_ID, id);
         contentValues.put(COLUMN_NAME, name);
         contentValues.put(COLUMN_DUE_DATE, date);
-        contentValues.put(COLUMN_CREATED_AT, created);
+        contentValues.put(COLUMN_CREATED_AT, Calendar.getInstance().getTime().toString());
         contentValues.put(COLUMN_IS_COMPLETED, completed);
         contentValues.put(COLUMN_COLOR, color);
         contentValues.put(COLUMN_CATEGORY, category);
@@ -55,7 +56,7 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COLUMN_ID, id);
         contentValues.put(COLUMN_NAME, name);
         contentValues.put(COLUMN_DUE_DATE, date);
-        contentValues.put(COLUMN_CREATED_AT, created);
+        contentValues.put(COLUMN_CREATED_AT, Calendar.getInstance().getTime().toString());
         contentValues.put(COLUMN_IS_COMPLETED, completed);
         contentValues.put(COLUMN_COLOR, color);
         contentValues.put(COLUMN_CATEGORY, category);
@@ -69,7 +70,7 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COLUMN_ID, id);
         contentValues.put(COLUMN_NAME, name);
         contentValues.put(COLUMN_DUE_DATE, date);
-        contentValues.put(COLUMN_CREATED_AT, created);
+        contentValues.put(COLUMN_CREATED_AT, Calendar.getInstance().getTime().toString());
         contentValues.put(COLUMN_IS_COMPLETED, completed);
         contentValues.put(COLUMN_COLOR, color);
         contentValues.put(COLUMN_CATEGORY, category);

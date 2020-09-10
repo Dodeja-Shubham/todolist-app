@@ -161,9 +161,8 @@ public class AllTasksFragment extends Fragment {
             public void onClick(View view) {
                 Database db = new Database(getContext());
                 db.deleteTask(allTasks.get(position).getId());
-                allTasks.remove(position);
-                adapter.notifyDataSetChanged();
                 popupWindow.dismiss();
+                reloadDataDB();
             }
         });
 
@@ -179,18 +178,15 @@ public class AllTasksFragment extends Fragment {
                     db.insertFinished(allTasks.get(position).getId(), allTasks.get(position).getTitle()
                             , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
                             , "true", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
-                    allTasks.remove(position);
-                    adapter.notifyDataSetChanged();
                     popupWindow.dismiss();
                 }else {
                     db.deleteTask(allTasks.get(position).getId());
                     db.insertFinished(allTasks.get(position).getId(), allTasks.get(position).getTitle()
                             , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
                             , "true", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
-                    allTasks.remove(position);
-                    adapter.notifyDataSetChanged();
                     popupWindow.dismiss();
                 }
+                reloadDataDB();
             }
         });
 
@@ -227,6 +223,7 @@ public class AllTasksFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                     popupWindow.dismiss();
                 }
+                reloadDataDB();
             }
         });
     }
