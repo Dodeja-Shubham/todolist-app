@@ -1,6 +1,8 @@
 package com.vys.todo.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
@@ -8,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,15 +20,38 @@ import android.widget.ArrayAdapter;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.vys.todo.APIModels.TaskResponse;
+import com.vys.todo.Adapters.AllTasksAdapter;
 import com.vys.todo.Adapters.UpcomingTasksAdapter;
+import com.vys.todo.Class.ApiRequestClass;
 import com.vys.todo.Class.RecyclerItemClickListener;
 import com.vys.todo.Data.Database;
+import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.vys.todo.Activities.LoginActivity.TOKEN;
 
 
 public class UpcomingTasksFragment extends Fragment {
@@ -34,10 +60,13 @@ public class UpcomingTasksFragment extends Fragment {
 
     private String TAG = "UpcomingTasksFragment";
     private RecyclerView upcomingRV;
-    private List<TaskDataModel> allTasks;
+    private List<TaskResponse> allTasks;
     private UpcomingTasksAdapter adapter;
     private Spinner categorySelector;
     private int selectedCategory = 0;
+
+    Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+    private ApiRequestClass retrofitCall = retrofit.create(ApiRequestClass.class);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +77,7 @@ public class UpcomingTasksFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            reloadDataDB();
+            loadData();
         }
     }
 
@@ -57,9 +86,8 @@ public class UpcomingTasksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_upcoming_tasks, container, false);
         Database db = new Database(getContext());
-        allTasks = db.getAllTasks();
-        adapter = new UpcomingTasksAdapter(getContext(), allTasks);
         upcomingRV = v.findViewById(R.id.upcoming_rv);
+        loadData();
         categorySelector = v.findViewById(R.id.uct_category_selector);
         categorySelector.setAdapter(new ArrayAdapter<String>(getContext(), R.layout.spinner_dropdown_item, R.id.spinner_item_tv, CATEGORIES_LIST));
 
@@ -73,7 +101,7 @@ public class UpcomingTasksFragment extends Fragment {
                     }
                 } else {
                     if (adapter != null) {
-                        List<TaskDataModel> newData = new ArrayList<>();
+                        List<TaskResponse> newData = new ArrayList<>();
                         for (int k = 0; k < allTasks.size(); k++) {
                             if (allTasks.get(k).getCategory().equals(CATEGORIES_LIST[selectedCategory])) {
                                 newData.add(allTasks.get(k));
@@ -89,37 +117,17 @@ public class UpcomingTasksFragment extends Fragment {
             }
         });
 
-        upcomingRV.setLayoutManager(new LinearLayoutManager(getContext()));
-        upcomingRV.setAdapter(adapter);
 
-        upcomingRV.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), upcomingRV, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, int x, int y) {
-                showMenuPopUp(view, getContext(), x, y, position);
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
         return v;
-    }
-
-    private void reloadDataDB() {
-        Database db = new Database(getContext());
-        allTasks = db.getAllTasks();
-        if (adapter != null) {
-            adapter.setNewData(allTasks);
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        reloadDataDB();
+        loadData();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void showMenuPopUp(final View view, final Context mCtx, int x, int y, final int position) {
         LayoutInflater layoutInflater = (LayoutInflater) mCtx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -130,59 +138,135 @@ public class UpcomingTasksFragment extends Fragment {
         popupWindow.update();
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
         popupWindow.setOutsideTouchable(true);
-        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_OUTSIDE) {
-                    popupWindow.dismiss();
-                    return true;
-                }
-                return false;
+        popupWindow.setTouchInterceptor((view1, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                popupWindow.dismiss();
+                return true;
             }
+            return false;
         });
         popupWindow.showAsDropDown(view, x, -100);
 
         TextView delete = popupView.findViewById(R.id.ut_menu_delete);
         TextView finished = popupView.findViewById(R.id.ut_menu_finished);
-        TextView missed = popupView.findViewById(R.id.ut_menu_missed);
 
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Database db = new Database(getContext());
-                db.deleteTask(allTasks.get(position).getId());
-                allTasks.remove(position);
-                adapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
+        delete.setOnClickListener(view12 -> {
+            deleteTask(allTasks.get(position).getId());
         });
 
-        finished.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Database db = new Database(getContext());
-                db.deleteTask(allTasks.get(position).getId());
-                db.insertFinished(allTasks.get(position).getId(), allTasks.get(position).getTitle()
-                        , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
-                        , "true", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
-                allTasks.remove(position);
-                adapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
-        });
+        finished.setOnClickListener(view14 -> {
+            if (allTasks.get(position).getIsCompleted()) {
+                Toast.makeText(mCtx, "Task is already finished", Toast.LENGTH_LONG).show();
+            } else {
+                try {
+                    JSONObject obj = new JSONObject();
+                    obj.put("is_completed", true);
+                    Call<TaskResponse> call = retrofitCall.updateTask(new SharedPrefs(getContext()).getToken(), allTasks.get(position).getId(), obj);
+                    call.enqueue(new Callback<TaskResponse>() {
+                        @Override
+                        public void onResponse(Call<TaskResponse> call, Response<TaskResponse> response) {
+                            if (response.isSuccessful()) {
+                                loadData();
+                            } else {
+                                try {
+                                    Log.e(TAG, response.errorBody().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
 
-        missed.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onFailure(Call<TaskResponse> call, Throwable t) {
+                            Log.e(TAG, t.getMessage());
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            popupWindow.dismiss();
+        });
+    }
+
+    private void deleteTask(int id) {
+
+    }
+
+
+    private void loadData() {
+        Call<List<TaskResponse>> callGet = retrofitCall.getTasks(TOKEN);
+        callGet.enqueue(new Callback<List<TaskResponse>>() {
             @Override
-            public void onClick(View view) {
-                Database db = new Database(getContext());
-                db.deleteTask(allTasks.get(position).getId());
-                db.insertMissed(allTasks.get(position).getId(), allTasks.get(position).getTitle()
-                        , allTasks.get(position).getDue_date(), allTasks.get(position).getCreated_at()
-                        , "false", allTasks.get(position).getColour(), allTasks.get(position).getCategory());
-                allTasks.remove(position);
-                adapter.notifyDataSetChanged();
-                popupWindow.dismiss();
+            public void onResponse(Call<List<TaskResponse>> call, Response<List<TaskResponse>> response) {
+                if (response.isSuccessful()) {
+                    allTasks = response.body();
+                    List<TaskResponse> data = new ArrayList<>();
+                    for (int i = 0; i < allTasks.size(); i++) {
+                        if(allTasks.get(i).getDueDate() != null){
+                            if (!allTasks.get(i).getIsCompleted() && !dateMissed(allTasks.get(i).getDueDate())){
+                                data.add(allTasks.get(i));
+                            }
+                        }
+
+                    }
+                    allTasks = data;
+                    adapter = new UpcomingTasksAdapter(getContext(), allTasks);
+                    upcomingRV.setLayoutManager(new LinearLayoutManager(getContext()));
+                    upcomingRV.setAdapter(adapter);
+                    upcomingRV.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), upcomingRV, new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position, int x, int y) {
+                            showMenuPopUp(view, getContext(), x, y, position);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+
+                        }
+                    }));
+                } else {
+                    try {
+                        Log.e(TAG, response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TaskResponse>> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
             }
         });
+    }
+
+    boolean dateMissed(String aDate){
+        int todayYear = Calendar.YEAR;
+        int todayMonth = Calendar.MONTH;
+        int todayDay = Calendar.DAY_OF_MONTH;
+
+        int year = Integer.parseInt(aDate.substring(0, 4));
+        int month = Integer.parseInt(aDate.substring(5, 7));
+        int day = Integer.parseInt(aDate.substring(8, 10));
+
+        if(todayYear > year){
+            return true;
+        }else if(todayMonth > month){
+            return true;
+        }else if(todayDay > day){
+            return true;
+        }
+        return false;
+    }
+
+    private Date stringToDate(String aDate) {
+        if (aDate == null) return null;
+        int year = Integer.parseInt(aDate.substring(0, 3));
+        int month = Integer.parseInt(aDate.substring(6, 7));
+        int day = Integer.parseInt(aDate.substring(9, 10));
+        Calendar c = Calendar.getInstance();
+        c.set(year, month - 1, day);
+        return c.getTime();
     }
 }

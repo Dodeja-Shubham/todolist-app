@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,15 +19,27 @@ import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.vys.todo.APIModels.TaskResponse;
 import com.vys.todo.Adapters.AllTasksAdapter;
 import com.vys.todo.Adapters.MissedTasksAdapter;
+import com.vys.todo.Class.ApiRequestClass;
 import com.vys.todo.Class.RecyclerItemClickListener;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.vys.todo.Activities.LoginActivity.TOKEN;
 
 public class MissedFragment extends Fragment {
 
@@ -34,10 +47,13 @@ public class MissedFragment extends Fragment {
 
     private String TAG = "MissedFragment";
     private RecyclerView missedRV;
-    private List<TaskDataModel> missedTasks;
+    private List<TaskResponse> missedTasks;
     private MissedTasksAdapter adapter;
     private Spinner categorySelector;
     private int selectedCategory = 0;
+
+    Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+    private ApiRequestClass retrofitCall = retrofit.create(ApiRequestClass.class);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,8 +66,6 @@ public class MissedFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_missed, container, false);
         Database db = new Database(getContext());
-        missedTasks = db.getAllMissed();
-        adapter = new MissedTasksAdapter(getContext(),missedTasks);
         missedRV = v.findViewById(R.id.missed_rv);
         categorySelector = v.findViewById(R.id.missed_category_selector);
         categorySelector.setAdapter(new ArrayAdapter<>(getContext(), R.layout.spinner_dropdown_item, R.id.spinner_item_tv, CATEGORIES_LIST));
@@ -66,7 +80,7 @@ public class MissedFragment extends Fragment {
                     }
                 }else{
                     if(adapter != null){
-                        List<TaskDataModel> newData = new ArrayList<>();
+                        List<TaskResponse> newData = new ArrayList<>();
                         for (int k = 0;k < missedTasks.size();k++){
                             if(missedTasks.get(k).getCategory().equals(CATEGORIES_LIST[selectedCategory])){
                                 newData.add(missedTasks.get(k));
@@ -81,20 +95,8 @@ public class MissedFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        missedRV.setLayoutManager(new LinearLayoutManager(getContext()));
-        missedRV.setAdapter(adapter);
 
-        missedRV.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), missedRV, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, int x, int y) {
-                showMenuPopUp(view,getContext(),x,y,position);
-            }
 
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
         return v;
     }
 
@@ -102,22 +104,14 @@ public class MissedFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            reloadDataDB();
-        }
-    }
-
-    private void reloadDataDB(){
-        Database db = new Database(getContext());
-        missedTasks = db.getAllMissed();
-        if(adapter != null){
-            adapter.setNewData(missedTasks);
+            loadData();
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        reloadDataDB();
+        loadData();
     }
 
     public void showMenuPopUp(final View view, final Context mCtx, int x, int y,final int position) {
@@ -161,13 +155,75 @@ public class MissedFragment extends Fragment {
             public void onClick(View view) {
                 Database db = new Database(getContext());
                 db.deleteMissed(missedTasks.get(position).getId());
-                db.insertFinished(missedTasks.get(position).getId(), missedTasks.get(position).getTitle()
-                        , missedTasks.get(position).getDue_date(), missedTasks.get(position).getCreated_at()
-                        , "true", missedTasks.get(position).getColour(), missedTasks.get(position).getCategory());
                 missedTasks.remove(position);
                 adapter.notifyDataSetChanged();
                 popupWindow.dismiss();
             }
         });
+    }
+
+    private void loadData() {
+        Call<List<TaskResponse>> callGet = retrofitCall.getTasks(TOKEN);
+        callGet.enqueue(new Callback<List<TaskResponse>>() {
+            @Override
+            public void onResponse(Call<List<TaskResponse>> call, Response<List<TaskResponse>> response) {
+                if (response.isSuccessful()) {
+                    missedTasks = response.body();
+                    List<TaskResponse> data = new ArrayList<>();
+                    for (int i = 0;i < missedTasks.size();i++){
+                        if(missedTasks.get(i).getDueDate() != null){
+                            if(!missedTasks.get(i).getIsCompleted() && dateMissed(missedTasks.get(i).getDueDate())){
+                                data.add(missedTasks.get(i));
+                            }
+                        }
+                    }
+                    missedTasks = data;
+                    adapter = new MissedTasksAdapter(getContext(),missedTasks);
+                    missedRV.setLayoutManager(new LinearLayoutManager(getContext()));
+                    missedRV.setAdapter(adapter);
+                    missedRV.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), missedRV, new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position, int x, int y) {
+                            showMenuPopUp(view,getContext(),x,y,position);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+
+                        }
+                    }));
+                } else {
+                    try {
+                        Log.e(TAG,response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TaskResponse>> call, Throwable t) {
+                Log.e(TAG,t.getMessage());
+            }
+        });
+    }
+
+    boolean dateMissed(String aDate){
+        int todayYear = Calendar.YEAR;
+        int todayMonth = Calendar.MONTH;
+        int todayDay = Calendar.DAY_OF_MONTH;
+
+        int year = Integer.parseInt(aDate.substring(0, 4));
+        int month = Integer.parseInt(aDate.substring(5, 7));
+        int day = Integer.parseInt(aDate.substring(8, 10));
+
+        if(todayYear > year){
+            return true;
+        }else if(todayMonth > month){
+            return true;
+        }else if(todayDay > day){
+            return true;
+        }
+        return false;
     }
 }

@@ -9,41 +9,67 @@
     tools:context=".Activities.MainActivity">
 
     <LinearLayout
-        android:weightSum="1"
+        android:id="@+id/progress_bar_main"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <include
-            layout="@layout/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:background="#8B000000"
+        android:gravity="center"
+        android:translationZ="10dp">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
+            android:weightSum="1"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/home_screen_tab_layout"
+            <include
+                layout="@layout/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                app:tabBackground="@color/colorPrimary" />
+                android:layout_height="wrap_content" />
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/home_screen_view_pager"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="0dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:visibility="gone"
-                android:translationZ="2dp"
-                android:id="@+id/home_screen_search_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/home_screen_tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    app:tabBackground="@color/colorPrimary" />
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/home_screen_view_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:visibility="gone"
+                    android:translationZ="2dp"
+                    android:id="@+id/home_screen_search_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
 
         </LinearLayout>
+
+
 
     </LinearLayout>
 
@@ -56,4 +82,5 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
         android:src="@drawable/baseline_add_white_48" />
+
 </RelativeLayout>

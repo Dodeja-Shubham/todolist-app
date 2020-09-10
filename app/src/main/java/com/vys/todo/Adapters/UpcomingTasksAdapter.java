@@ -9,17 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.vys.todo.Data.TaskDataModel;
+
+import com.vys.todo.APIModels.TaskResponse;
 import com.vys.todo.R;
 import java.util.List;
 
 public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdapter.MyViewHolder> {
 
     Context context;
-    List<TaskDataModel> list;
+    List<TaskResponse> list;
     private final String TAG = "UpcomingTasksAdapter";
 
-    public UpcomingTasksAdapter(Context context, List<TaskDataModel> data) {
+    public UpcomingTasksAdapter(Context context, List<TaskResponse> data) {
         this.context = context;
         this.list = data;
     }
@@ -35,7 +36,7 @@ public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdap
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         try {
             holder.name.setText(list.get(position).getTitle());
-            holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ",""));
+            holder.date.setText(list.get(position).getDueDate());
             holder.category.setText(list.get(position).getCategory());
             holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));
         } catch (Exception e) {
@@ -62,13 +63,14 @@ public class UpcomingTasksAdapter extends RecyclerView.Adapter<UpcomingTasksAdap
         }
     }
 
-    public void addNewData(TaskDataModel data) {
+    public void addNewData(TaskResponse data) {
         this.list.add(data);
         notifyDataSetChanged();
     }
 
-    public void setNewData(List<TaskDataModel> data) {
+    public void setNewData(List<TaskResponse> data) {
         this.list = data;
         notifyDataSetChanged();
     }
+
 }

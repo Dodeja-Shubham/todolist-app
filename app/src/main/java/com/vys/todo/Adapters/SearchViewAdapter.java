@@ -6,18 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.vys.todo.Data.Database;
-import com.vys.todo.Data.TaskDataModel;
+import com.vys.todo.APIModels.TaskResponse;
 import com.vys.todo.R;
-
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -27,10 +21,10 @@ import java.util.List;
 public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.MyViewHolder> {
 
     Context context;
-    List<TaskDataModel> list;
+    List<TaskResponse> list;
     private final String TAG = "SearchViewAdapter";
 
-    public SearchViewAdapter(Context context, List<TaskDataModel> data) {
+    public SearchViewAdapter(Context context, List<TaskResponse> data) {
         this.context = context;
         this.list = data;
     }
@@ -47,19 +41,16 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         try {
             holder.name.setText(list.get(position).getTitle());
-            holder.date.setText(list.get(position).getDue_date().replace("GMT+05:30 ", ""));
+            holder.date.setText(list.get(position).getDueDate());
             holder.category.setText(list.get(position).getCategory());
-
-            Date date = stringToDate(list.get(position).getDue_date(), "EEE MMM d HH:mm:ss zz yyyy");
-            if(list.get(position).getIs_completed()){
+            if(list.get(position).getIsCompleted()){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
-                holder.date.setText("Completed on: " + list.get(position).getCreated_at().replace("GMT+05:30 ", ""));
-            }else if(Calendar.getInstance().getTime().compareTo(date) > 0){
+                holder.date.setText(list.get(position).getDueDate());
+            }else if(dateMissed(list.get(position).getDueDate())){
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_error));
             }else {
                 holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_clock));
             }
-
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -84,12 +75,12 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
         }
     }
 
-    public void addNewData(TaskDataModel data) {
+    public void addNewData(TaskResponse data) {
         this.list.add(data);
         notifyDataSetChanged();
     }
 
-    public void setNewData(List<TaskDataModel> data) {
+    public void setNewData(List<TaskResponse> data) {
         this.list = data;
         notifyDataSetChanged();
     }
@@ -99,5 +90,24 @@ public class SearchViewAdapter extends RecyclerView.Adapter<SearchViewAdapter.My
         ParsePosition pos = new ParsePosition(0);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat simpledateformat = new SimpleDateFormat(aFormat);
         return simpledateformat.parse(aDate, pos);
+    }
+
+    boolean dateMissed(String aDate){
+        int todayYear = Calendar.YEAR;
+        int todayMonth = Calendar.MONTH;
+        int todayDay = Calendar.DAY_OF_MONTH;
+
+        int year = Integer.parseInt(aDate.substring(0, 4));
+        int month = Integer.parseInt(aDate.substring(5, 7));
+        int day = Integer.parseInt(aDate.substring(8, 10));
+
+        if(todayYear > year){
+            return true;
+        }else if(todayMonth > month){
+            return true;
+        }else if(todayDay > day){
+            return true;
+        }
+        return false;
     }
 }

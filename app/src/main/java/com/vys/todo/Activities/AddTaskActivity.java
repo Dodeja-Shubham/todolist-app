@@ -23,12 +23,28 @@ import android.widget.Toast;
 
 import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
+import com.vys.todo.APIModels.TaskResponse;
+import com.vys.todo.Class.ApiRequestClass;
 import com.vys.todo.Data.Database;
+import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.vys.todo.Activities.LoginActivity.TOKEN;
 
 public class AddTaskActivity extends AppCompatActivity {
 
@@ -39,6 +55,8 @@ public class AddTaskActivity extends AppCompatActivity {
     private LinearLayout holder;
     private TextView tv_error_date, tv_error_name;
     private int selectedCategory = 0;
+    Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+    private ApiRequestClass retrofitCall = retrofit.create(ApiRequestClass.class);
 
     Spinner categoriesSpinner;
 
@@ -82,21 +100,13 @@ public class AddTaskActivity extends AppCompatActivity {
             }
         });
 
-        taskDateEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if (b) {
-                    showDatepicker();
-                }
-            }
-        });
-
-        iv_calendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        taskDateEt.setOnFocusChangeListener((view, b) -> {
+            if (b) {
                 showDatepicker();
             }
         });
+
+        iv_calendar.setOnClickListener(view -> showDatepicker());
 
         taskNameEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -118,50 +128,70 @@ public class AddTaskActivity extends AppCompatActivity {
         new SingleDateAndTimePickerDialog.Builder(AddTaskActivity.this)
                 .curved()
                 .minutesStep(1)
-                .displayListener(new SingleDateAndTimePickerDialog.DisplayListener() {
-                    @Override
-                    public void onDisplayed(SingleDateAndTimePicker picker) {
-                        //retrieve the SingleDateAndTimePicker
-                    }
+                .displayMinutes(false)
+                .displayHours(false)
+                .displayDays(false)
+                .displayMonth(true)
+                .displayYears(true)
+                .displayDaysOfMonth(true)
+                .displayListener(picker -> {
+                    //retrieve the SingleDateAndTimePicker
                 })
                 .title("Task Date & Time")
-                .listener(new SingleDateAndTimePickerDialog.Listener() {
-                    @Override
-                    public void onDateSelected(Date date) {
-                        taskDateEt.setText(date.toLocaleString());
-                        tv_error_date.setVisibility(View.INVISIBLE);
-                        dueDate = date;
-                        holder.requestFocus();
-                    }
+                .listener(date -> {
+                    SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
+                    taskDateEt.setText(format.format(date));
+                    tv_error_date.setVisibility(View.INVISIBLE);
+                    dueDate = date;
+                    holder.requestFocus();
                 }).display();
     }
 
     private void validateData() {
-        Date todaysDate = calendar.getTime();
         if(dueDate == null){
             tv_error_date.setText(getString(R.string.date_not_set));
             tv_error_date.setVisibility(View.VISIBLE);
-        }
-        else if(todaysDate.compareTo(dueDate) > 0){
-            tv_error_date.setText(getString(R.string.cannot_set_a_reminder_for_past));
-            tv_error_date.setVisibility(View.VISIBLE);
         } else {
             tv_error_date.setVisibility(View.INVISIBLE);
-            addDataToDb();
+            addData();
         }
 
     }
 
-    private void addDataToDb() {
-        Database db = new Database(AddTaskActivity.this);
-        int id = new Random().nextInt(10000000);
-        if (db.insertTask(id, taskNameEt.getText().toString(), dueDate.toString(),
-                calendar.getTime().toString(), "false", "#FFFFFF", CATEGORIES_LIST[selectedCategory])) {
-            Toast.makeText(AddTaskActivity.this, "Task Added", Toast.LENGTH_LONG).show();
-            finish();
-        } else {
-            Toast.makeText(AddTaskActivity.this, "Unable to add task", Toast.LENGTH_LONG).show();
-        }
+    private void addData() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        TaskResponse obj = new TaskResponse();
+        obj.setTitle(taskNameEt.getText().toString());
+        obj.setCategory(CATEGORIES_LIST[selectedCategory]);
+        obj.setDesc("qwertyuiop");
+        obj.setDueDate(dateFormat.format(dueDate));
+        obj.setColour("#FFFFFF");
+        obj.setIsCompleted(false);
+        obj.setCreatedAt(dateFormat.format(Calendar.getInstance().getTime()));
+        Call<TaskResponse> call = retrofitCall.setTasks(TOKEN,obj);
+        call.enqueue(new Callback<TaskResponse>() {
+            @Override
+            public void onResponse(Call<TaskResponse> call, Response<TaskResponse> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(AddTaskActivity.this,"Task Added",Toast.LENGTH_LONG).show();
+                    taskNameEt.setText("");
+                    taskDateEt.setText("");
+                }else{
+                    Toast.makeText(AddTaskActivity.this,"Something wen't wrong",Toast.LENGTH_LONG).show();
+                    try {
+                        Log.e(TAG,response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TaskResponse> call, Throwable t) {
+                Toast.makeText(AddTaskActivity.this,"Something wen't wrong",Toast.LENGTH_LONG).show();
+                Log.e(TAG,t.getMessage());
+            }
+        });
     }
 
     @Override
@@ -183,8 +213,8 @@ public class AddTaskActivity extends AppCompatActivity {
                 tv_error_name.setVisibility(View.VISIBLE);
             } else {
                 tv_error_name.setVisibility(View.INVISIBLE);
+                validateData();
             }
-            validateData();
         } else if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }

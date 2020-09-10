@@ -48,13 +48,13 @@ public class SharedPrefs {
         editor.apply();
     }
 
-    public static String getToken() {
-        return token;
+    public String getToken() {
+        return this.prefs.getString(token,"");
     }
 
     public void setToken(String value) {
         SharedPreferences.Editor editor = this.prefs.edit();
-        editor.putString(password,value);
+        editor.putString(token,value);
         editor.apply();
     }
 }

@@ -10,17 +10,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.vys.todo.Data.TaskDataModel;
+import com.vys.todo.APIModels.TaskResponse;
 import com.vys.todo.R;
 import java.util.List;
 
 public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdapter.MyViewHolder> {
 
     Context context;
-    List<TaskDataModel> list;
+    List<TaskResponse> list;
     private final String TAG = "FinishedTasksAdapter";
 
-    public FinishedTasksAdapter(Context context, List<TaskDataModel> data) {
+    public FinishedTasksAdapter(Context context, List<TaskResponse> data) {
         this.context = context;
         this.list = data;
     }
@@ -37,7 +37,7 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         try {
             holder.name.setText(list.get(position).getTitle());
-            holder.date.setText("Completed on: " + list.get(position).getCreated_at().replace("GMT+05:30 ",""));
+            holder.date.setText(list.get(position).getDueDate());
             holder.category.setText(list.get(position).getCategory());
             holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
             holder.completed.setColorFilter(context.getColor(android.R.color.holo_green_light), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -65,12 +65,12 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
         }
     }
 
-    public void addNewData(TaskDataModel data) {
+    public void addNewData(TaskResponse data) {
         this.list.add(data);
         notifyDataSetChanged();
     }
 
-    public void setNewData(List<TaskDataModel> data) {
+    public void setNewData(List<TaskResponse> data) {
         this.list = data;
         notifyDataSetChanged();
     }

@@ -21,6 +21,7 @@ public class Database extends SQLiteOpenHelper {
     public static String COLUMN_IS_COMPLETED = "COMPLETED";
     public static String COLUMN_COLOR = "COLOR";
     public static String COLUMN_CATEGORY = "CATEGORY";
+    public static String COLUMN_SYNC = "SYNC";
 
     public static String FINISHED_TABLE = "FINISHED";
     public static String MISSED_TABLE = "MISSED";
@@ -31,12 +32,12 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE " + TASKS_TABLE + " (ID NUMBER PRIMARY KEY, NAME TEXT,DATE TEXT,CREATED TEXT, COMPLETED TEXT,COLOR TEXT,CATEGORY TEXT);");
-        sqLiteDatabase.execSQL("CREATE TABLE " + FINISHED_TABLE + " (ID NUMBER PRIMARY KEY, NAME TEXT,DATE TEXT,CREATED TEXT, COMPLETED TEXT,COLOR TEXT,CATEGORY TEXT);");
-        sqLiteDatabase.execSQL("CREATE TABLE " + MISSED_TABLE + " (ID NUMBER PRIMARY KEY, NAME TEXT,DATE TEXT,CREATED TEXT, COMPLETED TEXT,COLOR TEXT,CATEGORY TEXT);");
+        sqLiteDatabase.execSQL("CREATE TABLE " + TASKS_TABLE + " (ID NUMBER PRIMARY KEY, NAME TEXT,DATE TEXT,CREATED TEXT, COMPLETED TEXT,COLOR TEXT,CATEGORY TEXT,SYNC TEXT);");
+        sqLiteDatabase.execSQL("CREATE TABLE " + FINISHED_TABLE + " (ID NUMBER PRIMARY KEY, NAME TEXT,DATE TEXT,CREATED TEXT, COMPLETED TEXT,COLOR TEXT,CATEGORY TEXT,SYNC TEXT);");
+        sqLiteDatabase.execSQL("CREATE TABLE " + MISSED_TABLE + " (ID NUMBER PRIMARY KEY, NAME TEXT,DATE TEXT,CREATED TEXT, COMPLETED TEXT,COLOR TEXT,CATEGORY TEXT,SYNC TEXT);");
     }
 
-    public boolean insertTask(int id, String name, String date, String created, String completed, String color, String category) {
+    public boolean insertTask(int id, String name, String date, String created, String completed, String color, String category,String sync) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_ID, id);
@@ -46,11 +47,12 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COLUMN_IS_COMPLETED, completed);
         contentValues.put(COLUMN_COLOR, color);
         contentValues.put(COLUMN_CATEGORY, category);
+        contentValues.put(COLUMN_SYNC, sync);
         db.insert(TASKS_TABLE, null, contentValues);
         db.close();
         return true;
     }
-    public boolean insertFinished(int id, String name, String date, String created, String completed, String color, String category) {
+    public boolean insertFinished(int id, String name, String date, String created, String completed, String color, String category,String sync) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_ID, id);
@@ -60,11 +62,12 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COLUMN_IS_COMPLETED, completed);
         contentValues.put(COLUMN_COLOR, color);
         contentValues.put(COLUMN_CATEGORY, category);
+        contentValues.put(COLUMN_SYNC, sync);
         db.insert(FINISHED_TABLE, null, contentValues);
         db.close();
         return true;
     }
-    public boolean insertMissed(int id, String name, String date, String created, String completed, String color, String category) {
+    public boolean insertMissed(int id, String name, String date, String created, String completed, String color, String category,String sync) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_ID, id);
@@ -74,22 +77,8 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COLUMN_IS_COMPLETED, completed);
         contentValues.put(COLUMN_COLOR, color);
         contentValues.put(COLUMN_CATEGORY, category);
+        contentValues.put(COLUMN_SYNC, sync);
         db.insert(MISSED_TABLE, null, contentValues);
-        db.close();
-        return true;
-    }
-
-    public boolean updateTask(int id, String name, String date, String created, String completed, String color, String category) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COLUMN_ID, id);
-        contentValues.put(COLUMN_NAME, name);
-        contentValues.put(COLUMN_DUE_DATE, date);
-        contentValues.put(COLUMN_CREATED_AT, created);
-        contentValues.put(COLUMN_IS_COMPLETED, completed);
-        contentValues.put(COLUMN_COLOR, color);
-        contentValues.put(COLUMN_CATEGORY, category);
-        db.update(TASKS_TABLE, contentValues, "ID = ? ", new String[]{String.valueOf(id)});
         db.close();
         return true;
     }
@@ -126,7 +115,8 @@ public class Database extends SQLiteOpenHelper {
             String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
             String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
             String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
-            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED);
+            String SYNC = res.getString(res.getColumnIndex(COLUMN_SYNC));
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED,SYNC.equals("true"));
             array_list.add(data);
             res.moveToNext();
         }
@@ -147,7 +137,8 @@ public class Database extends SQLiteOpenHelper {
             String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
             String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
             String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
-            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR, true,CREATED);
+            String SYNC = res.getString(res.getColumnIndex(COLUMN_SYNC));
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED,SYNC.equals("true"));
             array_list.add(data);
             res.moveToNext();
         }
@@ -168,7 +159,8 @@ public class Database extends SQLiteOpenHelper {
             String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
             String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
             String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
-            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR, false,CREATED);
+            String SYNC = res.getString(res.getColumnIndex(COLUMN_SYNC));
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED,SYNC.equals("true"));
             array_list.add(data);
             res.moveToNext();
         }
@@ -183,6 +175,60 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + FINISHED_TABLE + ";");
         db.execSQL("DELETE FROM " + MISSED_TABLE + ";");
         db.close();
+    }
+
+    public List<TaskDataModel> getUnSync(){
+        List<TaskDataModel> array_list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TASKS_TABLE + " WHERE " + COLUMN_SYNC + " = false", null);
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            int ID = res.getInt(res.getColumnIndex(COLUMN_ID));
+            String TITLE = res.getString(res.getColumnIndex(COLUMN_NAME));
+            String DATE = res.getString(res.getColumnIndex(COLUMN_DUE_DATE));
+            String CREATED = res.getString(res.getColumnIndex(COLUMN_CREATED_AT));
+            String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
+            String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
+            String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
+            String SYNC = res.getString(res.getColumnIndex(COLUMN_SYNC));
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED,SYNC.equals("true"));
+            array_list.add(data);
+            res.moveToNext();
+        }
+        res.close();
+        res = db.rawQuery("SELECT * FROM " + FINISHED_TABLE + " WHERE " + COLUMN_SYNC + " = false", null);
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            int ID = res.getInt(res.getColumnIndex(COLUMN_ID));
+            String TITLE = res.getString(res.getColumnIndex(COLUMN_NAME));
+            String DATE = res.getString(res.getColumnIndex(COLUMN_DUE_DATE));
+            String CREATED = res.getString(res.getColumnIndex(COLUMN_CREATED_AT));
+            String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
+            String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
+            String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
+            String SYNC = res.getString(res.getColumnIndex(COLUMN_SYNC));
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED,SYNC.equals("true"));
+            array_list.add(data);
+            res.moveToNext();
+        }
+        res.close();
+        res = db.rawQuery("SELECT * FROM " + MISSED_TABLE + " WHERE " + COLUMN_SYNC + " = false", null);
+        res.moveToFirst();
+        while (!res.isAfterLast()) {
+            int ID = res.getInt(res.getColumnIndex(COLUMN_ID));
+            String TITLE = res.getString(res.getColumnIndex(COLUMN_NAME));
+            String DATE = res.getString(res.getColumnIndex(COLUMN_DUE_DATE));
+            String CREATED = res.getString(res.getColumnIndex(COLUMN_CREATED_AT));
+            String COMPLETED = res.getString(res.getColumnIndex(COLUMN_IS_COMPLETED));
+            String COLOUR = res.getString(res.getColumnIndex(COLUMN_COLOR));
+            String CATEGORY = res.getString(res.getColumnIndex(COLUMN_CATEGORY));
+            String SYNC = res.getString(res.getColumnIndex(COLUMN_SYNC));
+            TaskDataModel data = new TaskDataModel(ID, TITLE,CATEGORY,DATE,COLOUR,COMPLETED.equals("true"),CREATED,SYNC.equals("true"));
+            array_list.add(data);
+            res.moveToNext();
+        }
+        res.close();
+        return array_list;
     }
 
     @Override

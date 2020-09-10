@@ -16,10 +16,10 @@ public class TaskResponse {
     private String title;
     @SerializedName("due_date")
     @Expose
-    private Object dueDate;
+    private String dueDate;
     @SerializedName("desc")
     @Expose
-    private Object desc;
+    private String desc;
     @SerializedName("colour")
     @Expose
     private String colour;
@@ -57,19 +57,19 @@ public class TaskResponse {
         this.title = title;
     }
 
-    public Object getDueDate() {
+    public String getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(Object dueDate) {
+    public void setDueDate(String dueDate) {
         this.dueDate = dueDate;
     }
 
-    public Object getDesc() {
+    public String getDesc() {
         return desc;
     }
 
-    public void setDesc(Object desc) {
+    public void setDesc(String desc) {
         this.desc = desc;
     }
 

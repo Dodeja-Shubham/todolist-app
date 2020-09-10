@@ -4,12 +4,12 @@ public class TaskDataModel {
 
     private String title, category, due_date, colour,  created_at;
     private int id;
-    private boolean is_completed;
+    private boolean is_completed,sync;
 
     public TaskDataModel(){}
 
     public TaskDataModel(int ID, String TITLE, String CATEGORY, String DUE_DATE, String COLOUR,
-                         boolean IS_COMPLETED, String CREATED_AT) {
+                         boolean IS_COMPLETED, String CREATED_AT,boolean SYNC) {
         this.id = ID;
         this.title = TITLE;
         this.category = CATEGORY;
@@ -17,6 +17,7 @@ public class TaskDataModel {
         this.colour = COLOUR;
         this.is_completed = IS_COMPLETED;
         this.created_at = CREATED_AT;
+        this.sync = SYNC;
     }
 
     public String getTitle() {
@@ -73,5 +74,13 @@ public class TaskDataModel {
 
     public void setIs_completed(boolean is_completed) {
         this.is_completed = is_completed;
+    }
+
+    public boolean isSync() {
+        return sync;
+    }
+
+    public void setSync(boolean sync) {
+        this.sync = sync;
     }
 }

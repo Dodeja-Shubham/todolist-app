@@ -13,17 +13,32 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.vys.todo.APIModels.TaskResponse;
+import com.vys.todo.Adapters.AllTasksAdapter;
 import com.vys.todo.Adapters.SearchViewAdapter;
+import com.vys.todo.Class.ApiRequestClass;
+import com.vys.todo.Class.RecyclerItemClickListener;
 import com.vys.todo.Data.Database;
 import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.Data.TaskDataModel;
@@ -33,9 +48,23 @@ import com.vys.todo.Fragments.MissedFragment;
 import com.vys.todo.Fragments.UpcomingTasksFragment;
 import com.vys.todo.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.vys.todo.Activities.LoginActivity.TOKEN;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,15 +77,24 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView searchRV;
     private SearchViewAdapter adapter;
 
-    private Database db;
-    private List<TaskDataModel> allTasks;
 
-    Fragment[] fragments = {new AllTasksFragment(),new UpcomingTasksFragment(), new FinishedFragment(), new MissedFragment()};
+    RequestQueue requestQueue;
+
+    private LinearLayout progressBar;
+
+    private Database db;
+    public static List<TaskResponse> allTasks;
+
+    Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
+    private ApiRequestClass retrofitCall = retrofit.create(ApiRequestClass.class);
+
+    Fragment[] fragments = {new AllTasksFragment(), new UpcomingTasksFragment(),new FinishedFragment(), new MissedFragment() };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loadData();
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("ToDo");
         toolbar.setTitleTextColor(Color.WHITE);
@@ -66,13 +104,11 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.home_screen_view_pager);
         addBtn = findViewById(R.id.home_screen_floating_btn);
         searchRV = findViewById(R.id.home_screen_search_rv);
+        progressBar = findViewById(R.id.progress_bar_main);
 
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewTask();
-            }
-        });
+        requestQueue = Volley.newRequestQueue(this);
+
+        addBtn.setOnClickListener(view -> addNewTask());
 
         /**adding new tabs*/
         tabLayout.addTab(tabLayout.newTab().setText("All Tasks"));
@@ -126,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.e(TAG, query);
-                List<TaskDataModel> newData = new ArrayList<>();
+                List<TaskResponse> newData = new ArrayList<>();
                 for (int k = 0; k < allTasks.size(); k++) {
                     if (allTasks.get(k).getTitle().contains(query)) {
                         newData.add(allTasks.get(k));
@@ -145,16 +181,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 Log.e(TAG, "Search Clicked");
-                allTasks = db.getAllTasks();
-                allTasks.addAll(db.getAllFinished());
-                if (Build.VERSION.SDK_INT >= 24) {
-                    allTasks.sort(new Comparator<TaskDataModel>() {
-                        @Override
-                        public int compare(TaskDataModel taskDataModel, TaskDataModel t1) {
-                            return taskDataModel.getTitle().compareTo(t1.getTitle());
-                        }
-                    });
-                }
                 adapter = new SearchViewAdapter(MainActivity.this, allTasks);
                 searchRV.setVisibility(View.VISIBLE);
                 viewPager.setVisibility(View.GONE);
@@ -181,13 +207,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.home_menu_add) {
             addNewTask();
-        } else if(item.getItemId() == R.id.home_menu_sync){
-            if(new SharedPrefs(MainActivity.this).getIsLoggedIn()){
-                Toast.makeText(MainActivity.this,"Syncing",Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(MainActivity.this,"You need to login first",Toast.LENGTH_LONG).show();
-                startActivity(new Intent(MainActivity.this,LoginActivity.class));
-            }
         }
         return true;
     }
@@ -195,5 +214,36 @@ public class MainActivity extends AppCompatActivity {
     private void addNewTask() {
         Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
         startActivity(intent);
+    }
+
+    private void enableDisableTouch(boolean type) {
+        if (type) {
+            this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        } else {
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+    }
+
+    private void loadData() {
+        Call<List<TaskResponse>> callGet = retrofitCall.getTasks(TOKEN);
+        callGet.enqueue(new Callback<List<TaskResponse>>() {
+            @Override
+            public void onResponse(Call<List<TaskResponse>> call, Response<List<TaskResponse>> response) {
+                if (response.isSuccessful()) {
+                    allTasks = response.body();
+                } else {
+                    try {
+                        Log.e(TAG, response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TaskResponse>> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+            }
+        });
     }
 }
