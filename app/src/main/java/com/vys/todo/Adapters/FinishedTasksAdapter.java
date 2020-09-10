@@ -2,6 +2,7 @@ package com.vys.todo.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.vys.todo.APIModels.TaskResponse;
 import com.vys.todo.R;
@@ -41,6 +43,8 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
             holder.category.setText(list.get(position).getCategory());
             holder.completed.setImageDrawable(context.getDrawable(R.drawable.ic_done_all));
             holder.completed.setColorFilter(context.getColor(android.R.color.holo_green_light), android.graphics.PorterDuff.Mode.MULTIPLY);
+            holder.colorHolder.setBackgroundColor(Color.parseColor(list.get(position).getColour()));
+            holder.desc.setText(list.get(position).getDesc());
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -52,8 +56,9 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView name, date, category;
+        TextView name, date, category,desc;
         ImageView delete, completed;
+        CardView colorHolder;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,6 +67,8 @@ public class FinishedTasksAdapter extends RecyclerView.Adapter<FinishedTasksAdap
             date = itemView.findViewById(R.id.ut_item_date);
             category = itemView.findViewById(R.id.ut_item_category);
             completed = itemView.findViewById(R.id.ut_item_completed_cb);
+            colorHolder = itemView.findViewById(R.id.ut_item_color);
+            desc = itemView.findViewById(R.id.ut_item_desc);
         }
     }
 

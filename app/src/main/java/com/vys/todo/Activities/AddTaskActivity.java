@@ -3,9 +3,9 @@ package com.vys.todo.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,18 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker;
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog;
 import com.vys.todo.APIModels.TaskResponse;
 import com.vys.todo.Class.ApiRequestClass;
-import com.vys.todo.Data.Database;
-import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.R;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,23 +36,20 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.vys.todo.Activities.LoginActivity.TOKEN;
+import static com.vys.todo.Activities.SplashActivity.TOKEN;
 
 public class AddTaskActivity extends AppCompatActivity {
 
     private final String[] CATEGORIES_LIST = {"Default","Home","Work","Personal","Fitness","Medication"};
 
     private final String TAG = "AddTaskActivity";
-    private EditText taskNameEt, taskDateEt;
+    private EditText taskNameEt, taskDateEt, taskDescEt;
     private LinearLayout holder;
-    private TextView tv_error_date, tv_error_name;
+    private TextView tv_error_date, tv_error_name,tv_error_desc;
     private int selectedCategory = 0;
     Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
     private ApiRequestClass retrofitCall = retrofit.create(ApiRequestClass.class);
-
     Spinner categoriesSpinner;
-
-    private Calendar calendar = Calendar.getInstance();
     private Date dueDate;
 
     @Override
@@ -79,10 +68,12 @@ public class AddTaskActivity extends AppCompatActivity {
 
         taskNameEt = findViewById(R.id.add_task_name_et);
         taskDateEt = findViewById(R.id.add_task_date_et);
+        taskDescEt = findViewById(R.id.add_task_desc_et);
         ImageView iv_calendar = findViewById(R.id.add_task_calendar);
         holder = findViewById(R.id.holder_add_task);
         tv_error_date = findViewById(R.id.add_task_error_date);
         tv_error_name = findViewById(R.id.add_task_error_name);
+        tv_error_desc = findViewById(R.id.add_task_error_desc);
         categoriesSpinner = findViewById(R.id.add_task_category_spinner);
 
         categoriesSpinner.setAdapter(new ArrayAdapter<String>(AddTaskActivity.this,
@@ -120,6 +111,23 @@ public class AddTaskActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        taskDescEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                tv_error_desc.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
     }
@@ -163,9 +171,9 @@ public class AddTaskActivity extends AppCompatActivity {
         TaskResponse obj = new TaskResponse();
         obj.setTitle(taskNameEt.getText().toString());
         obj.setCategory(CATEGORIES_LIST[selectedCategory]);
-        obj.setDesc("qwertyuiop");
+        obj.setDesc(taskDescEt.getText().toString());
         obj.setDueDate(dateFormat.format(dueDate));
-        obj.setColour("#FFFFFF");
+        obj.setColour(colorRandom());
         obj.setIsCompleted(false);
         obj.setCreatedAt(dateFormat.format(Calendar.getInstance().getTime()));
         Call<TaskResponse> call = retrofitCall.setTasks(TOKEN,obj);
@@ -176,6 +184,7 @@ public class AddTaskActivity extends AppCompatActivity {
                     Toast.makeText(AddTaskActivity.this,"Task Added",Toast.LENGTH_LONG).show();
                     taskNameEt.setText("");
                     taskDateEt.setText("");
+                    finish();
                 }else{
                     Toast.makeText(AddTaskActivity.this,"Something wen't wrong",Toast.LENGTH_LONG).show();
                     try {
@@ -209,15 +218,25 @@ public class AddTaskActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.add_task_menu_check) {
-            if (taskNameEt.getText().toString().trim().isEmpty()) {
-                tv_error_name.setVisibility(View.VISIBLE);
+            if (taskNameEt.getText().toString().trim().isEmpty() || taskDescEt.getText().toString().trim().isEmpty()) {
+                if(taskNameEt.getText().toString().trim().isEmpty())
+                    tv_error_name.setVisibility(View.VISIBLE);
+                if(taskDescEt.getText().toString().trim().isEmpty())
+                    tv_error_desc.setVisibility(View.VISIBLE);
             } else {
                 tv_error_name.setVisibility(View.INVISIBLE);
+                tv_error_desc.setVisibility(View.INVISIBLE);
                 validateData();
             }
         } else if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
         return true;
+    }
+
+    private String colorRandom(){
+        Random random = new Random();
+        int nextInt = random.nextInt(0xffffff + 1);
+        return String.format("#%06x", nextInt);
     }
 }

@@ -1,5 +1,6 @@
 package com.vys.todo.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -25,13 +26,16 @@ import com.vys.todo.Adapters.MissedTasksAdapter;
 import com.vys.todo.Class.ApiRequestClass;
 import com.vys.todo.Class.RecyclerItemClickListener;
 import com.vys.todo.Data.Database;
+import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.Data.TaskDataModel;
 import com.vys.todo.R;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,7 +43,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.vys.todo.Activities.LoginActivity.TOKEN;
+import static com.vys.todo.Activities.SplashActivity.TOKEN;
 
 public class MissedFragment extends Fragment {
 
@@ -65,11 +69,9 @@ public class MissedFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_missed, container, false);
-        Database db = new Database(getContext());
         missedRV = v.findViewById(R.id.missed_rv);
         categorySelector = v.findViewById(R.id.missed_category_selector);
         categorySelector.setAdapter(new ArrayAdapter<>(getContext(), R.layout.spinner_dropdown_item, R.id.spinner_item_tv, CATEGORIES_LIST));
-
         categorySelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -94,9 +96,6 @@ public class MissedFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
-
-
-
         return v;
     }
 
@@ -104,17 +103,18 @@ public class MissedFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            loadData();
+            loadData(0);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
+        loadData(0);
     }
 
-    public void showMenuPopUp(final View view, final Context mCtx, int x, int y,final int position) {
+    @SuppressLint("ClickableViewAccessibility")
+    public void showMenuPopUp(final View view, final Context mCtx, int x, int y, final int position) {
         LayoutInflater layoutInflater = (LayoutInflater) mCtx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View popupView = layoutInflater.inflate(R.layout.missed_tasks_menu, null);
@@ -124,45 +124,44 @@ public class MissedFragment extends Fragment {
         popupWindow.update();
         popupWindow.setBackgroundDrawable(new BitmapDrawable());
         popupWindow.setOutsideTouchable(true);
-        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_OUTSIDE) {
-                    popupWindow.dismiss();
-                    return true;
-                }
-                return false;
+        popupWindow.setTouchInterceptor((view1, motionEvent) -> {
+            if (motionEvent.getAction() == MotionEvent.ACTION_OUTSIDE) {
+                popupWindow.dismiss();
+                return true;
             }
+            return false;
         });
         popupWindow.showAsDropDown(view, x, -100);
 
-        TextView delete = popupView.findViewById(R.id.missed_menu_delete);
         TextView finished = popupView.findViewById(R.id.missed_menu_finished);
 
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Database db = new Database(getContext());
-                db.deleteMissed(missedTasks.get(position).getId());
-                missedTasks.remove(position);
-                adapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
-        });
+        finished.setOnClickListener(view12 -> {
+            Map<String, Object> obj = new HashMap<>();
+            obj.put("is_completed", true);
+            Call<TaskResponse> call = retrofitCall.updateTask(new SharedPrefs(getContext()).getToken(), missedTasks.get(position).getId(), obj);
+            call.enqueue(new Callback<TaskResponse>() {
+                @Override
+                public void onResponse(Call<TaskResponse> call, Response<TaskResponse> response) {
+                    if (response.isSuccessful()) {
+                        loadData(position);
+                    } else {
+                        try {
+                            Log.e(TAG, response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
-        finished.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Database db = new Database(getContext());
-                db.deleteMissed(missedTasks.get(position).getId());
-                missedTasks.remove(position);
-                adapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
+                @Override
+                public void onFailure(Call<TaskResponse> call, Throwable t) {
+                    Log.e(TAG, t.getMessage());
+                }
+            });
         });
     }
 
-    private void loadData() {
+    private void loadData(int position) {
         Call<List<TaskResponse>> callGet = retrofitCall.getTasks(TOKEN);
         callGet.enqueue(new Callback<List<TaskResponse>>() {
             @Override
@@ -192,6 +191,8 @@ public class MissedFragment extends Fragment {
 
                         }
                     }));
+                    missedRV.scrollToPosition(Math.max((position - 1), 0));
+                    categorySelector.setSelection(0);
                 } else {
                     try {
                         Log.e(TAG,response.errorBody().string());

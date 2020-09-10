@@ -42,8 +42,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,8 +53,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.vys.todo.Activities.LoginActivity.TOKEN;
-
+import static com.vys.todo.Activities.SplashActivity.TOKEN;
 
 public class UpcomingTasksFragment extends Fragment {
 
@@ -77,7 +78,7 @@ public class UpcomingTasksFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            loadData();
+            loadData(0);
         }
     }
 
@@ -85,9 +86,8 @@ public class UpcomingTasksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_upcoming_tasks, container, false);
-        Database db = new Database(getContext());
         upcomingRV = v.findViewById(R.id.upcoming_rv);
-        loadData();
+        loadData(0);
         categorySelector = v.findViewById(R.id.uct_category_selector);
         categorySelector.setAdapter(new ArrayAdapter<String>(getContext(), R.layout.spinner_dropdown_item, R.id.spinner_item_tv, CATEGORIES_LIST));
 
@@ -124,7 +124,7 @@ public class UpcomingTasksFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
+        loadData(0);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -146,55 +146,41 @@ public class UpcomingTasksFragment extends Fragment {
             return false;
         });
         popupWindow.showAsDropDown(view, x, -100);
-
-        TextView delete = popupView.findViewById(R.id.ut_menu_delete);
         TextView finished = popupView.findViewById(R.id.ut_menu_finished);
-
-        delete.setOnClickListener(view12 -> {
-            deleteTask(allTasks.get(position).getId());
-        });
 
         finished.setOnClickListener(view14 -> {
             if (allTasks.get(position).getIsCompleted()) {
                 Toast.makeText(mCtx, "Task is already finished", Toast.LENGTH_LONG).show();
             } else {
-                try {
-                    JSONObject obj = new JSONObject();
-                    obj.put("is_completed", true);
-                    Call<TaskResponse> call = retrofitCall.updateTask(new SharedPrefs(getContext()).getToken(), allTasks.get(position).getId(), obj);
-                    call.enqueue(new Callback<TaskResponse>() {
-                        @Override
-                        public void onResponse(Call<TaskResponse> call, Response<TaskResponse> response) {
-                            if (response.isSuccessful()) {
-                                loadData();
-                            } else {
-                                try {
-                                    Log.e(TAG, response.errorBody().string());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                Map<String, Object> obj = new HashMap<>();
+                obj.put("is_completed", true);
+                Call<TaskResponse> call = retrofitCall.updateTask(new SharedPrefs(getContext()).getToken(), allTasks.get(position).getId(), obj);
+                call.enqueue(new Callback<TaskResponse>() {
+                    @Override
+                    public void onResponse(Call<TaskResponse> call, Response<TaskResponse> response) {
+                        if (response.isSuccessful()) {
+                            loadData(position);
+                        } else {
+                            try {
+                                Log.e(TAG, response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
+                    }
 
-                        @Override
-                        public void onFailure(Call<TaskResponse> call, Throwable t) {
-                            Log.e(TAG, t.getMessage());
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    public void onFailure(Call<TaskResponse> call, Throwable t) {
+                        Log.e(TAG, t.getMessage());
+                    }
+                });
             }
             popupWindow.dismiss();
         });
     }
 
-    private void deleteTask(int id) {
 
-    }
-
-
-    private void loadData() {
+    private void loadData(int position) {
         Call<List<TaskResponse>> callGet = retrofitCall.getTasks(TOKEN);
         callGet.enqueue(new Callback<List<TaskResponse>>() {
             @Override
@@ -203,8 +189,8 @@ public class UpcomingTasksFragment extends Fragment {
                     allTasks = response.body();
                     List<TaskResponse> data = new ArrayList<>();
                     for (int i = 0; i < allTasks.size(); i++) {
-                        if(allTasks.get(i).getDueDate() != null){
-                            if (!allTasks.get(i).getIsCompleted() && !dateMissed(allTasks.get(i).getDueDate())){
+                        if (allTasks.get(i).getDueDate() != null) {
+                            if (!allTasks.get(i).getIsCompleted() && !dateMissed(allTasks.get(i).getDueDate())) {
                                 data.add(allTasks.get(i));
                             }
                         }
@@ -225,6 +211,8 @@ public class UpcomingTasksFragment extends Fragment {
 
                         }
                     }));
+                    upcomingRV.scrollToPosition(position);
+                    categorySelector.setSelection(0);
                 } else {
                     try {
                         Log.e(TAG, response.errorBody().string());
@@ -241,7 +229,7 @@ public class UpcomingTasksFragment extends Fragment {
         });
     }
 
-    boolean dateMissed(String aDate){
+    boolean dateMissed(String aDate) {
         int todayYear = Calendar.YEAR;
         int todayMonth = Calendar.MONTH;
         int todayDay = Calendar.DAY_OF_MONTH;
@@ -250,11 +238,11 @@ public class UpcomingTasksFragment extends Fragment {
         int month = Integer.parseInt(aDate.substring(5, 7));
         int day = Integer.parseInt(aDate.substring(8, 10));
 
-        if(todayYear > year){
+        if (todayYear > year) {
             return true;
-        }else if(todayMonth > month){
+        } else if (todayMonth > month) {
             return true;
-        }else if(todayDay > day){
+        } else if (todayDay > day) {
             return true;
         }
         return false;

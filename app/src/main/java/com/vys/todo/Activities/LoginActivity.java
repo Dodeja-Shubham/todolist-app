@@ -23,6 +23,7 @@ import com.vys.todo.Class.ApiRequestClass;
 import com.vys.todo.Data.SharedPrefs;
 import com.vys.todo.R;
 
+import static com.vys.todo.Activities.SplashActivity.TOKEN;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +38,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static String TOKEN = "";
+
 
     private final String TAG = "LoginActivity";
 
@@ -145,49 +146,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-        SharedPrefs prefs = new SharedPrefs(this);
-        if(prefs.getIsLoggedIn()){
-            System.out.println("username = " + prefs.getUsername());
-            System.out.println("password = " + prefs.getPassword());
-            username = prefs.getUsername();
-            password = prefs.getPassword();
-            RequestBody name = RequestBody.create(MediaType.parse("text/parse"), username);
-            RequestBody pass = RequestBody.create(MediaType.parse("text/parse"), password);
-            Call<LoginResponse> call = retrofitCall.loginUser(name, pass);
-            call.enqueue(new Callback<LoginResponse>() {
-                @Override
-                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                    if (response.isSuccessful()) {
-                        try{
-                            SharedPrefs prefs = new SharedPrefs(LoginActivity.this);
-                            prefs.setIsLoggedIn(true);
-                            prefs.setUsername(username);
-                            prefs.setPassword(password);
-                            prefs.setToken(response.body().getKey());
-                            TOKEN = "Token " + response.body().getKey();
-                            startActivity(new Intent(LoginActivity.this,MainActivity.class));
-                            finish();
-                        }catch (Exception e){
-                            Log.e(TAG, e.getMessage());
-                            Toast.makeText(LoginActivity.this,"Something wen't wrong",Toast.LENGTH_LONG).show();
-                        }
-                    } else if (response.code() == 400) {
-                        Toast.makeText(LoginActivity.this, "Unable to log in with provided credentials.", Toast.LENGTH_LONG).show();
-                    } else {
-                        try {
-                            Log.e(TAG, response.errorBody().string());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<LoginResponse> call, Throwable t) {
-                    Log.e(TAG, t.getMessage());
-                }
-            });
-        }
     }
 
     @SuppressLint("SetTextI18n")

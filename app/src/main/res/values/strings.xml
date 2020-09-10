@@ -25,4 +25,7 @@
     <string name="password">Password</string>
     <string name="enter_password_here">Enter password here</string>
     <string name="login">login</string>
+    <string name="description">Description</string>
+    <string name="enter_few_lines_about_task">Enter few lines about task</string>
+    <string name="field_empty">Field empty</string>
 </resources>

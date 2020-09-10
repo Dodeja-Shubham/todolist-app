@@ -20,35 +20,27 @@
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/APIModels/LoginResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/APIModels/LoginResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/APIModels/TaskResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/APIModels/TaskResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Activities/AddTaskActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Activities/AddTaskActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Activities/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Activities/LoginActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Activities/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Activities/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/AllTasksAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/AllTasksAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/FinishedTasksAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/FinishedTasksAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/MissedTasksAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/MissedTasksAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/SearchViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/SearchViewAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/UpcomingTasksAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Adapters/UpcomingTasksAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Class/ApiRequestClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Class/ApiRequestClass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Data/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Data/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Data/SharedPrefs.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Data/SharedPrefs.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Data/TaskDataModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Data/TaskDataModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/AllTasksFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/AllTasksFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/FinishedFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/FinishedFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/MissedFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/MissedFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/UpcomingTasksFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/vys/todo/Fragments/UpcomingTasksFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/menu/home_screen_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/home_screen_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_add_task.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_add_task.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/all_tasks_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/all_tasks_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/missed_tasks_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/missed_tasks_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/upcoming_tasks_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/upcoming_tasks_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/upcoming_tasks_rv_item.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/upcoming_tasks_rv_item.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -211,30 +203,34 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="473" y="244" key="AndroidCreateResourceFileDialog/0.0.1536.824@0.0.1536.824" timestamp="1599657662060" />
-    <state x="627" y="225" key="AndroidCreateXmlResourceDialog" timestamp="1599707604715">
+    <state x="627" y="225" key="AndroidCreateXmlResourceDialog" timestamp="1599730394957">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="627" y="225" key="AndroidCreateXmlResourceDialog/0.0.1536.824@0.0.1536.824" timestamp="1599707604715" />
+    <state x="627" y="225" key="AndroidCreateXmlResourceDialog/0.0.1536.824@0.0.1536.824" timestamp="1599730394957" />
+    <state x="449" y="167" key="Downloadable.Font.Dialog.Size" timestamp="1599728327716">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="449" y="167" key="Downloadable.Font.Dialog.Size/0.0.1536.824@0.0.1536.824" timestamp="1599728327716" />
     <state x="549" y="167" key="FileChooserDialogImpl" timestamp="1599667808886">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="549" y="167" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1599667808886" />
-    <state width="1491" height="269" key="GridCell.Tab.0.bottom" timestamp="1599728002756">
+    <state width="1491" height="269" key="GridCell.Tab.0.bottom" timestamp="1599731410825">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="269" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1599728002756" />
-    <state width="1491" height="269" key="GridCell.Tab.0.center" timestamp="1599728002756">
+    <state width="1491" height="269" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1599731410825" />
+    <state width="1491" height="269" key="GridCell.Tab.0.center" timestamp="1599731410824">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="269" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1599728002756" />
-    <state width="1491" height="269" key="GridCell.Tab.0.left" timestamp="1599728002756">
+    <state width="1491" height="269" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1599731410824" />
+    <state width="1491" height="269" key="GridCell.Tab.0.left" timestamp="1599731410824">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="269" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1599728002756" />
-    <state width="1491" height="269" key="GridCell.Tab.0.right" timestamp="1599728002756">
+    <state width="1491" height="269" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1599731410824" />
+    <state width="1491" height="269" key="GridCell.Tab.0.right" timestamp="1599731410825">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1491" height="269" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1599728002756" />
+    <state width="1491" height="269" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1599731410825" />
     <state x="584" y="190" key="chooseDestDirectoryDialog" timestamp="1599654577444">
       <screen x="0" y="0" width="1536" height="824" />
     </state>

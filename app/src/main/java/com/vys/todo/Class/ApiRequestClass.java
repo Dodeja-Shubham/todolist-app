@@ -47,5 +47,5 @@ public interface ApiRequestClass {
     @PATCH("/todo/{id}")
     Call<TaskResponse> updateTask(@Header("Authorization") String authorization,
                                   @Path("id") int id,
-                                  @Body JSONObject data);
+                                  @Body Map<String, Object> data);
 }

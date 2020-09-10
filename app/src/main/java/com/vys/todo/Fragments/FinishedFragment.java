@@ -38,7 +38,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.vys.todo.Activities.LoginActivity.TOKEN;
+import static com.vys.todo.Activities.SplashActivity.TOKEN;
 
 public class FinishedFragment extends Fragment {
 
@@ -73,7 +73,6 @@ public class FinishedFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_finished, container, false);
         loadData();
-        Database db = new Database(getContext());
         finishedRV = v.findViewById(R.id.finished_rv);
 
 
@@ -107,18 +106,6 @@ public class FinishedFragment extends Fragment {
 
         finishedRV.setLayoutManager(new LinearLayoutManager(getContext()));
         finishedRV.setAdapter(adapter);
-
-        finishedRV.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), finishedRV, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, int x, int y) {
-                showMenuPopUp(view,getContext(),x,y,position);
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
         return v;
     }
 
@@ -126,53 +113,6 @@ public class FinishedFragment extends Fragment {
     public void onResume() {
         super.onResume();
         loadData();
-    }
-
-    public void showMenuPopUp(final View view, final Context mCtx, int x, int y, final int position) {
-        LayoutInflater layoutInflater = (LayoutInflater) mCtx
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.finished_tasks_menu, null);
-        final PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        popupWindow.setFocusable(true);
-        popupWindow.update();
-        popupWindow.setBackgroundDrawable(new BitmapDrawable());
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_OUTSIDE) {
-                    popupWindow.dismiss();
-                    return true;
-                }
-                return false;
-            }
-        });
-        popupWindow.showAsDropDown(view, x, -100);
-
-        TextView delete = popupView.findViewById(R.id.f_menu_delete);
-        TextView missed = popupView.findViewById(R.id.f_menu_missed);
-
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Database db = new Database(getContext());
-                db.deleteFinished(allFinishedTasks.get(position).getId());
-                allFinishedTasks.remove(position);
-                adapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
-        });
-
-        missed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Database db = new Database(getContext());
-                allFinishedTasks.remove(position);
-                adapter.notifyDataSetChanged();
-                popupWindow.dismiss();
-            }
-        });
     }
 
     private void loadData() {
@@ -192,6 +132,7 @@ public class FinishedFragment extends Fragment {
                     adapter = new FinishedTasksAdapter(getContext(),allFinishedTasks);
                     finishedRV.setLayoutManager(new LinearLayoutManager(getContext()));
                     finishedRV.setAdapter(adapter);
+                    categorySelector.setSelection(0);
                 } else {
                     try {
                         Log.e(TAG,response.errorBody().string());

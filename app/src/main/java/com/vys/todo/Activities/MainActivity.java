@@ -64,7 +64,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.vys.todo.Activities.LoginActivity.TOKEN;
+import static com.vys.todo.Activities.SplashActivity.TOKEN;
 
 public class MainActivity extends AppCompatActivity {
 
