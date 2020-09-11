@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
@@ -8,95 +7,117 @@
     android:layout_height="match_parent"
     tools:context=".Activities.LoginActivity">
 
-    <include
-        layout="@layout/toolbar"
+    <LinearLayout
+        android:id="@+id/login_progress"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone"
+        android:translationZ="20dp"
+        android:gravity="center">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/username"
-            android:textColor="@color/colorAccent" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <EditText
-            android:id="@+id/login_name_et"
-            style="@style/EditTextTheme"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/username"
+                android:textColor="@color/colorAccent" />
+
+            <EditText
+                android:id="@+id/login_name_et"
+                style="@style/EditTextTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="6dp"
+                android:hint="@string/enter_username_here"
+                android:textColor="@color/black"
+                android:textColorHint="#656565" />
+
+            <TextView
+                android:id="@+id/login_error_name"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="12sp"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/password"
+                android:textColor="@color/colorAccent" />
+
+            <EditText
+                android:id="@+id/login_pass_et"
+                style="@style/EditTextTheme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="6dp"
+                android:inputType="textPassword"
+                android:hint="@string/enter_password_here"
+                android:textColor="@color/black"
+                android:textColorHint="#656565" />
+
+            <TextView
+                android:id="@+id/login_error_pass"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="12sp"
+                android:visibility="invisible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/login_btn_submit"
+            android:text="@string/login"
+            android:layout_margin="16dp"
             android:textSize="16sp"
-            android:layout_marginTop="6dp"
-            android:hint="@string/enter_username_here"
-            android:textColor="@color/black"
-            android:textColorHint="#656565" />
+            android:textStyle="bold"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/login_error_name"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="12sp"
-            android:visibility="invisible"
+            android:id="@+id/login_create_account"
+            android:text="@string/create_new_account"
+            android:textColor="@color/colorPrimary"
+            android:textAlignment="center"
+            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/password"
-            android:textColor="@color/colorAccent" />
-
-        <EditText
-            android:id="@+id/login_pass_et"
-            style="@style/EditTextTheme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_marginTop="6dp"
-            android:inputType="textPassword"
-            android:hint="@string/enter_password_here"
-            android:textColor="@color/black"
-            android:textColorHint="#656565" />
-
-        <TextView
-            android:id="@+id/login_error_pass"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="12sp"
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/login_btn_submit"
-        android:text="@string/login"
-        android:layout_margin="16dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="@color/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/login_create_account"
-        android:text="@string/create_new_account"
-        android:textColor="@color/colorPrimary"
-        android:textAlignment="center"
-        android:layout_marginTop="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-</LinearLayout>
+</RelativeLayout>

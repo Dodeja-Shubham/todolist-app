@@ -10,8 +10,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -46,6 +48,8 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView usernameError, passwordError, emailError;
     Button submitBtn;
 
+    LinearLayout progressBar;
+
     private String username, email, password;
 
     OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
@@ -70,6 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
         emailEt = findViewById(R.id.signup_email_et);
         emailError = findViewById(R.id.signup_error_email);
         submitBtn = findViewById(R.id.signup_btn_submit);
+        progressBar = findViewById(R.id.signup_progress);
 
         usernameEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -144,8 +149,18 @@ public class SignUpActivity extends AppCompatActivity {
         return true;
     }
 
+    private void enableDisableTouch(boolean type) {
+        if (type) {
+            this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        } else {
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+    }
+
     private void signUp() {
         if (validateData()) {
+            progressBar.setVisibility(View.VISIBLE);
+            enableDisableTouch(false);
             username = usernameEt.getText().toString().trim();
             password = passwordEt.getText().toString();
             email = emailEt.getText().toString().trim();
@@ -163,6 +178,8 @@ public class SignUpActivity extends AppCompatActivity {
                         prefs.setPassword(password);
                         prefs.setToken(response.body().getToken());
                         TOKEN = "Token " + response.body().getToken();
+                        progressBar.setVisibility(View.GONE);
+                        enableDisableTouch(true);
                         startActivity(new Intent(SignUpActivity.this,MainActivity.class));
                         finish();
                     }else{

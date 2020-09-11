@@ -13,8 +13,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView usernameError, passwordError,create;
     private Button loginBtn;
 
+    LinearLayout progressBar;
+
     OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(60, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS).build();
@@ -68,8 +72,11 @@ public class LoginActivity extends AppCompatActivity {
         passwordError = findViewById(R.id.login_error_pass);
         loginBtn = findViewById(R.id.login_btn_submit);
         create = findViewById(R.id.login_create_account);
+        progressBar = findViewById(R.id.login_progress);
         loginBtn.setOnClickListener(view -> {
             if (validateData()) {
+                progressBar.setVisibility(View.VISIBLE);
+                enableDisableTouch(false);
                 username = usernameET.getText().toString().trim();
                 password = passwordET.getText().toString();
                 RequestBody name = RequestBody.create(MediaType.parse("text/parse"), username);
@@ -86,6 +93,8 @@ public class LoginActivity extends AppCompatActivity {
                                 prefs.setPassword(password);
                                 prefs.setToken(response.body().getKey());
                                 TOKEN = "Token " + response.body().getKey();
+                                progressBar.setVisibility(View.GONE);
+                                enableDisableTouch(true);
                                 startActivity(new Intent(LoginActivity.this,MainActivity.class));
                                 finish();
                             }catch (Exception e){
@@ -169,6 +178,14 @@ public class LoginActivity extends AppCompatActivity {
 
 
         return true;
+    }
+
+    private void enableDisableTouch(boolean type) {
+        if (type) {
+            this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        } else {
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
     }
 
 
