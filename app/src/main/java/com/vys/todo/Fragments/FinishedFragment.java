@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -51,6 +52,8 @@ public class FinishedFragment extends Fragment {
     private List<TaskResponse> allFinishedTasks;
     private FinishedTasksAdapter adapter;
 
+    LinearLayout noData;
+
     Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
     private ApiRequestClass retrofitCall = retrofit.create(ApiRequestClass.class);
 
@@ -72,9 +75,11 @@ public class FinishedFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_finished, container, false);
-        loadData();
-        finishedRV = v.findViewById(R.id.finished_rv);
 
+        finishedRV = v.findViewById(R.id.finished_rv);
+        noData = v.findViewById(R.id.finished_no_data);
+
+        loadData();
 
         categorySelector = v.findViewById(R.id.f_category_selector);
         categorySelector.setAdapter(new ArrayAdapter<String>(getContext(),R.layout.spinner_dropdown_item,R.id.spinner_item_tv, CATEGORIES_LIST));
@@ -133,6 +138,13 @@ public class FinishedFragment extends Fragment {
                     finishedRV.setLayoutManager(new LinearLayoutManager(getContext()));
                     finishedRV.setAdapter(adapter);
                     categorySelector.setSelection(0);
+                    if(allFinishedTasks.isEmpty()){
+                        noData.setVisibility(View.VISIBLE);
+                        finishedRV.setVisibility(View.INVISIBLE);
+                    }else{
+                        noData.setVisibility(View.GONE);
+                        finishedRV.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     try {
                         Log.e(TAG,response.errorBody().string());

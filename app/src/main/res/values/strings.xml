@@ -33,4 +33,8 @@
     <string name="create_new_account">Create New Account</string>
     <string name="sign_up">sign up</string>
     <string name="logout">Logout</string>
+    <string name="no_tasks_yet_go_add_some">No tasks yet ? Go add some</string>
+    <string name="looks_like_there_are_no_upcoming_tasks">Looks like there are no upcoming tasks</string>
+    <string name="not_finished_any_tasks_yet">Not finished any tasks yet ?</string>
+    <string name="hurray_not_a_single_task_missed">Hurray !!! Not a single task missed</string>
 </resources>

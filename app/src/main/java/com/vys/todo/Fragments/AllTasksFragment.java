@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -67,6 +68,8 @@ public class AllTasksFragment extends Fragment {
     private Spinner categorySelector;
     private int selectedCategory = 0;
 
+    LinearLayout nodata;
+
     Retrofit retrofit = new Retrofit.Builder().baseUrl(ApiRequestClass.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
     private ApiRequestClass retrofitCall = retrofit.create(ApiRequestClass.class);
 
@@ -82,6 +85,7 @@ public class AllTasksFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_all_tasks, container, false);
         Database db = new Database(getContext());
         allRV = v.findViewById(R.id.all_tasks_rv);
+        nodata = v.findViewById(R.id.all_tasks_no_data);
         loadData(0);
         categorySelector = v.findViewById(R.id.at_category_selector);
         categorySelector.setAdapter(new ArrayAdapter<String>(getContext(), R.layout.spinner_dropdown_item, R.id.spinner_item_tv, CATEGORIES_LIST));
@@ -208,6 +212,13 @@ public class AllTasksFragment extends Fragment {
                     }));
                     allRV.scrollToPosition(position);
                     categorySelector.setSelection(0);
+                    if(allTasks.isEmpty()){
+                        allRV.setVisibility(View.INVISIBLE);
+                        nodata.setVisibility(View.VISIBLE);
+                    }else{
+                        allRV.setVisibility(View.VISIBLE);
+                        nodata.setVisibility(View.GONE);
+                    }
                 } else {
                     try {
                         Log.e(TAG, response.errorBody().string());
