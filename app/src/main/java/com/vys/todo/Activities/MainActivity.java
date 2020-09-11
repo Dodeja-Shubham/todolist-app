@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 Log.e(TAG, "Search Clicked");
+                loadData();
                 adapter = new SearchViewAdapter(MainActivity.this, allTasks);
                 searchRV.setVisibility(View.VISIBLE);
                 viewPager.setVisibility(View.GONE);
